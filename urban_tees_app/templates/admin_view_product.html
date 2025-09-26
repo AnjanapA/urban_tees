@@ -9,31 +9,36 @@
 </head>
 
 <body>
-    <div class="grid text-center container" style="--bs-columns: 3;">
-        <div class="row">
-            <div class="col">
+    <form action="{% url 'admin_edit_layout' %}" method="post">{% csrf_token %}
 
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                            the
-                            card’s content.</p>
+        <div class="grid text-center container" style="--bs-columns: 3;">
+            <div class="row">
+                <div class="col">
+                    {% for p in context %}
+                    <div class="card" src="{{ item.n }}" width="200" height="auto" style="width: 18rem;">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
+                                of
+                                the
+                                card’s content.</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">An item</li>
+                            <li class="list-group-item">A second item</li>
+                            <li class="list-group-item">A third item</li>
+                        </ul>
+                        <div class="card-body">
+                            <a href="#" class="card-link">Card link</a>
+                            <a href="#" class="card-link">Another link</a>
+                        </div>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">An item</li>
-                        <li class="list-group-item">A second item</li>
-                        <li class="list-group-item">A third item</li>
-                    </ul>
-                    <div class="card-body">
-                        <a href="#" class="card-link">Card link</a>
-                        <a href="#" class="card-link">Another link</a>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </body>
 
 </html>
