@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .bgclr {
+            background-color: rgb(248, 170, 168);
+        }
+    </style>
+</head>
+
+<body>
+    <form action="{% url 'admin_edit_layout' %}" method="post">{% csrf_token %}
+        <select onchange="this.form.submit()" name="select_id">
+            <option value="">--select--</option>
+            {% for p in context %}
+            <option value="{{ p.id }}"> {{ p.id }}</option>
+            {% endfor %}
+            
+        </select>
+    </form>
+
+    <form action="{% url 'admin_update_layout' %}" method="post" name="admin_layout" 
+    enctype="multipart/form-data">{% csrf_token %}
+        <div class="bgclr" width="50" height="auto">
+            {% if n %}
+            <h3 id="image">
+                <img src="{{ item.n }}" width="200" height="auto">
+
+            </h3>
+            {% endif %}
+        </div>
+        <!-- <div class="row">
+            <div class="col">
+
+                <label for="">Product image</label>
+            </div>
+            <div class="col">
+
+                <input type="file" name="file_name" value="choose file">
+            </div>
+        </div> -->
+        <div class="container">
+            <div class="row">
+                <div class="col">
+
+                    <label for="">product title</label>
+                </div>
+                <div class="col">
+
+                    <input type="text" name="product_title" value="{{ item.item_name }}" disabled>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+
+                    <label for="">product description</label>
+                </div>
+                <div class="col">
+
+                    <input type="text" name="product_description" value="{{ item.item_description }}" disabled>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+
+                    <label for="">category</label>
+                </div>
+                <div class="col">
+
+                    <select name="category" id="category" disabled>
+                        <option value="mens">mens</option>
+                        <option value="womens">womens</option>
+                        <option value="girls">girls</option>
+                        <option value="boys">boys</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+
+                    <label for="">old price</label>
+                </div>
+                <div class="col">
+                    <del>
+
+                        <input type="text" name="old_price" value="{{ item.old_price }}">
+                    </del>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+
+                    <label for="">offer</label>
+                </div>
+                <div class="col">
+
+                    <input type="text" name="offer" value="{{ item.offer }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+
+                    <label for="">new Price</label>
+                </div>
+                <div class="col">
+
+                    <input type="text" name="new_price" value="{{ item.new_price }}" disabled>
+                </div>
+            </div>
+        </div>
+       <div class="row">
+        <div class="col">
+
+            <button type="submit">
+                UPDATE
+            </button>
+        </div>
+       </div>
+       <div class="row">
+        <div class="col">
+
+            <button type="submit">
+                DELETE
+            </button>
+        </div>
+       </div>
+       <div class="row">
+        <h2 name="upload">
+            {% if upload %}
+            {{ upload }}
+            {% endif %}
+        </h2>
+       </div>
+    </form>
+</body>
+
+</html>

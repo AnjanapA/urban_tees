@@ -1,0 +1,151 @@
+{% extends 'layout.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" 
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
+    <title>Document</title>
+  </head>
+<body>
+  <!-- navigation -->
+
+   {% block content %}
+
+<div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    {% for image in images %}
+    <div class="carousel-item active" data-bs-interval="10000">
+      <img src="{% static image %}" class="d-block w-100" alt="...">
+    </div>
+    <!-- <div class="carousel-item" data-bs-interval="2000">
+      <img src="{% static image %}" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static image %}" class="d-block w-100" alt="...">
+    </div> -->
+    {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="card" style="width: 18rem;">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Special title treatment</h5>
+        <p class="card-text">With supporting text content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card" style="width: 18rem;">
+    <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Special title treatment</h5>
+        <p class="card-text">With supporting textl content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card-footer text-body-secondary">
+    2 days ago
+  </div>
+</div>
+
+{% endblock content %}
+<script>
+  const tbody=document.getElementById("table-body");
+
+const itemsperpage=3;
+let currentpage=1;
+
+const watches=[
+        {brand:"rolex",price:"$5000",rating:"4.9",discount:"10%off"},
+        {brand:"Casio",price:"$50",rating:"4.2",discount:"10%off"},
+        {brand:"Fastrack",price:"$10",rating:"4.1",discount:"5%off"},
+        {brand:"Titan",price:"$60",rating:"4.9",discount:"25%off"},
+        {brand:"Diesel",price:"$80",rating:"4.4",discount:"15%off"},
+        {brand:"Seiko",price:"$220",rating:"4.5",discount:"30%off"},
+        {brand:"Timex",price:"$55",rating:"4.2",discount:"18%off"},
+        {brand:"rolex",price:"$5000",rating:"4.9",discount:"10%off"},
+        {brand:"rolex",price:"$5000",rating:"4.9",discount:"10%off"},
+        {brand:"rolex",price:"$5000",rating:"4.9",discount:"10%off"},
+      ]
+
+  
+  display_watch(currentpage);
+  function display_watch(page){
+    const start=(page-1)*itemsperpage;
+    const end=start+itemsperpage;
+    
+    tbody.innerHTML="";
+    
+    watches.slice(start,end).forEach(row => {
+
+      const tr=`<tr>
+        <td>${row.brand}</td>
+        <td>${row.price}</td>
+        <td>${row.rating}</td>
+        <td>${row.discount}</td>
+        </tr>`;
+        
+        tbody.innerHTML+=tr;
+      });
+      updatepagination();
+  }
+  
+  function updatepagination(){
+    const totalpage=Math.ceil(watches.length/itemsperpage);
+    const paged=document.getElementById("pagination");
+
+    paged.innerHTML="";
+    
+    paged.innerHTML+=`<li class=page-item ${currentpage === 1 ? 'disabled':''}">
+      <a class="page-link" href="#" onclick="changepage(${currentpage-1})"><<</a></li>`;
+      
+      
+    for(let i=1;i<=totalpage;i++){
+    paged.innerHTML+=`<li class=page-item ${i === currentpage ? 'active':''}">
+      <a class="page-link" href="#" onclick="changepage(${i})">${i}</a></li>`;
+    }
+    
+    paged.innerHTML+=`<li class=page-item ${currentpage === totalpage ? 'disabled':''}">
+      <a class="page-link" href="#" onclick="changepage(${currentpage + 1})">>></a></li>`;
+      
+    }
+    function changepage(page){
+      if(page<1 || page>Math.ceil(watches.length/itemsperpage))
+        return;
+      currentpage=page;
+      display_watch(currentpage);
+    
+    }
+
+</script>
+</body>
+</html>

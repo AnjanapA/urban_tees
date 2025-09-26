@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- pagination -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                <p class="card-text"></p>
+                <a href="#" class="btn btn-primary"></a>
+            </div>
+            <div class="'card-body">
+
+            </div>
+            </div>
+        </div>
+  
+          <table border="3">
+              <thead id="part">
+  
+                  <tr>
+                      <th>Brand</th>
+                      <th>Price</th>
+                      <th>Rating</th>
+                      <th>Discount</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body">
+  
+  
+                </tbody>
+
+          </table>
+      </div>
+      <div class="row">
+        <ul class="pagination" id="pagination">
+          <!-- <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous" onclick="">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next" onclick="">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li> -->
+        </ul>
+      </div>
+    </div>
+<script>
+  const tbody=document.getElementById("page-body");
+
+const itemsperpage=4;
+let currentpage=1;
+
+const tees=[
+        {item:"t1",item_name:"rolex",price:"$5000",rating:"4.9"},
+        {item:"t1",item_name:"rolex",price:"$5000",rating:"4.9"},
+        {item:"t1",item_name:"rolex",price:"$5000",rating:"4.9"},
+        {item:"t1",item_name:"rolex",price:"$5000",rating:"4.9"},
+        {item:"t1",item_name:"rolex",price:"$5000",rating:"4.9"},
+        {item:"t1",item_name:"rolex",price:"$5000",rating:"4.9"},
+        {item:"t1",item_name:"rolex",price:"$5000",rating:"4.9"},
+      ]
+
+  
+  display_tees(currentpage);
+  function display_tees(page){
+    const start=(page-1)*itemsperpage;
+    const end=start+itemsperpage;
+    
+    tbody.innerHTML="";
+    
+    tees.slice(start,end).forEach(row => {
+
+      const tr=`<div>
+        <div>${row.item}</div>
+        <div>${row.item_name}</div>
+        <div>${row.price}</div>
+        <div>${row.rating}</div>
+        </div>`;
+        
+        tbody.innerHTML+=tr;
+      });
+      updatepagination();
+  }
+  
+  function updatepagination(){
+    const totalpage=Math.ceil(tees.length/itemsperpage);
+    const paged=document.getElementById("pagination");
+
+    paged.innerHTML="";
+    
+    paged.innerHTML+=`<li class=page-item ${currentpage === 1 ? 'disabled':''}">
+      <a class="page-link" href="#" onclick="changepage(${currentpage-1})"><<</a></li>`;
+      
+      
+    for(let i=1;i<=totalpage;i++){
+    paged.innerHTML+=`<li class=page-item ${i === currentpage ? 'active':''}">
+      <a class="page-link" href="#" onclick="changepage(${i})">${i}</a></li>`;
+    }
+    
+    paged.innerHTML+=`<li class=page-item ${currentpage === totalpage ? 'disabled':''}">
+      <a class="page-link" href="#" onclick="changepage(${currentpage + 1})">>></a></li>`;
+      
+    }
+    function changepage(page){
+      if(page<1 || page>Math.ceil(tees.length/itemsperpage))
+        return;
+      currentpage=page;
+      display_tees(currentpage);
+    
+    }
+
+</script>
+</body>
+</html>
