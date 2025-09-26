@@ -13,6 +13,9 @@ def main(request):
 def user_layout(request):
     return render(request,'user_layout.html')
 
+def admin_view_product(request):
+    return render(request,'admin_view_product.html')
+
 def admin_operations(request):
     return render(request,'admin_operations.html')
 

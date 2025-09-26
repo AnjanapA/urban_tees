@@ -3,6 +3,9 @@ from . import views
 
 urlpatterns = [
 path('main',views.main,name='main'),
+path('admin_view_product',views.admin_view_product,name='admin_view_product'),
+
+
 path('admin_operations',views.admin_operations,name='admin_operations'),
 path('image_preview',views.image_preview,name='image_preview'),
 path('admin_add_layout',views.admin_add_layout,name='admin_add_layout'),
