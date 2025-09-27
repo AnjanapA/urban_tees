@@ -30,6 +30,9 @@ def image_preview(request):
         return render(request,'admin_add_layout.html',{'item':n})
     return render(request,'admin_add_layout.html',{'item':''})
 
+def admin_layout(request):
+    return render(request,'admin_layout.html')
+
 def admin_add_layout(request):
     n=""
     upload=''
@@ -49,7 +52,7 @@ def admin_add_layout(request):
                 destination.write(chunk)
         
         if f:
-            n=os.path.join('images/',f.name)
+            n=os.path.join('static/images/',f.name)
             upload='file uploaded successfully'
 
             
@@ -69,7 +72,30 @@ def admin_add_layout(request):
 
     return render(request,'admin_add_layout.html',{'item':n})
 
+def admin_view_layout(request):
+    item_details=Product.objects.all()
+    # if request.method == 'POST':
+    #     product_title=request.POST.get('product_title')
+    #     product_description=request.POST.get('product_description')
+    #     old_price=int(request.POST.get('old_price'))
+    #     category=request.POST.get('category')
+    #     offer=int(request.POST.get('offer'))
+    #     new_price=int(request.POST.get('new_price'))
 
+    #     f=request.FILES['file_name']
+    #     n=os.path.join('images/',f.name)
+
+    # item=Product(
+    #     id=0,  
+    #     item_image='n',
+    #     item_name='product_title',
+    #     item_description='product_description',
+    #     new_price='new_price',
+    #     old_price='old_price',
+    #     offer='offer',
+    #     category='category'
+    #     )
+    return render(request,'admin_view_layout.html',{'item':item_details})
 
 def admin_edit(request):
   
