@@ -15,24 +15,23 @@
         </nav>
     </div>
 
-    <div class="row">
-        <div class="grid text-center" style="--bs-columns: 3;">
+    <div class="container mt-4">
+        <div class="row g-3"> 
             {% for pro in item %}
-            <div class="col d-block justify-content-between">
-
-                <div class="card " style="width: 18rem;">
-                    <img src="{{ pro.item_image }}" width="200" height="auto" class="card-img-top" alt="product image">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+                <div class="card w-100">
+                    <img src="{{ pro.item_image }}" class="card-img-top" alt="product image"
+                        style="height: auto; max-height: 200px; object-fit: contain;">
                     <div class="card-body">
                         <h5 class="card-title">{{ pro.item_name }}</h5>
-                        <p class="card-text">{{pro.item_description}}</p>
-                        <p class="card-text">{{pro.category}}</p>
+                        <p class="card-text">{{ pro.item_description }}</p>
+                        <p class="card-text text-muted">{{ pro.category }}</p>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">{{ pro.new_price }}</li>
-                        <li class="list-group-item">{{ pro.old_price }}</li>
-                        <li class="list-group-item">{{ pro.offer }}</li>
+                        <li class="list-group-item"><strong>Price:</strong> {{ pro.new_price }}</li>
+                        <li class="list-group-item"><del>{{ pro.old_price }}</del></li>
+                        <li class="list-group-item text-success">{{ pro.offer }}</li>
                     </ul>
-
                 </div>
             </div>
             {% endfor %}
