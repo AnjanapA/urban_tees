@@ -28,9 +28,13 @@
                         <p class="card-text text-muted">{{ pro.category }}</p>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Price:</strong> {{ pro.new_price }}</li>
+                        <li class="list-group-item"><strong></strong> {{ pro.new_price }}</li>
                         <li class="list-group-item"><del>{{ pro.old_price }}</del></li>
                         <li class="list-group-item text-success">{{ pro.offer }}</li>
+                    </ul>
+                    <ul>
+                        <a href="{% url 'admin_edit_layout' % pro.id}">edit</a>
+                        <a href="{% url 'admin_delete_layout' % pro.id}">delete</a>
                     </ul>
                 </div>
             </div>
