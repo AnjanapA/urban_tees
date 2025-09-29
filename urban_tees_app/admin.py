@@ -11,6 +11,11 @@ class ProductAdmin(admin.ModelAdmin):
     'new_price',
     'old_price',
     'offer',
-    'category'
+    'category',
+    'item_quantity',
+    'item_size',
+   
+
+
     )
 admin.site.register(Product,ProductAdmin)

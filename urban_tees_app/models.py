@@ -12,6 +12,8 @@ class Product(models.Model):
     old_price = models.IntegerField()
     offer = models.IntegerField()
     category = models.CharField(max_length=255)
+    item_quantity=models.IntegerField()
+    item_size=models.CharField(max_length=255)
 
 
  

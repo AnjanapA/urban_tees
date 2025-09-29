@@ -1,22 +1,22 @@
-{% extends 'admin_add_layout.html' %}
+{% extends 'admin_layout.html' %}
 {% load static %}
 {% block content %}
 <div class="grid text-center container-fluid" style="--bs-columns: 3;">
     <div class="row">
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="d-flex justify-content-between">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#">Mens</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#">Womens</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#">Girls</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#">Boys</a></li>
+                <ul class="navbar-nav" id="select_category">
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="">Mens</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="">Womens</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="">Girls</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="">Boys</a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
     <div class="container mt-4">
-        <div class="row g-3"> 
+        <div class="row g-3">
             {% for pro in item %}
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
                 <div class="card w-100">
@@ -25,16 +25,24 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ pro.item_name }}</h5>
                         <p class="card-text">{{ pro.item_description }}</p>
-                        <p class="card-text text-muted">{{ pro.category }}</p>
+                        <p class="card-text text-muted" id="select_category">{{ pro.category }}</p>
+                        <p class="card-text text-muted" id="select_item_size">{{ pro.item_size }}</p>
+                        <p class="card-text text-muted">{{ pro.item_quantity }}</p>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong></strong> {{ pro.new_price }}</li>
-                        <li class="list-group-item"><del>{{ pro.old_price }}</del></li>
-                        <li class="list-group-item text-success">{{ pro.offer }}</li>
+                    <ul class="d-flex justify-content-between me-5">
+                        <li class="list-group-item text-danger fs-2"><strong></strong> {{ pro.new_price }}</li>
+                        <li class="list-group-item fs-3"><del>{{ pro.old_price }}</del></li>
+                        <li class="list-group-item text-success fs-2">{{ pro.offer }} %</li>
                     </ul>
-                    <ul>
-                        <a href="{% url 'admin_edit_layout' % pro.id}">edit</a>
-                        <a href="{% url 'admin_delete_layout' % pro.id}">delete</a>
+                    <ul class=" d-flex justify-content-between me-5">
+                        <button>
+
+                            <a href="{% url 'admin_edit' pro.id  %}">edit</a>
+                        </button>
+                        <button>
+
+                            <a href="{% url 'admin_delete_layout' pro.id %}">delete</a>
+                        </button>
                     </ul>
                 </div>
             </div>

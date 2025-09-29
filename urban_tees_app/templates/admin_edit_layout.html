@@ -1,142 +1,127 @@
+{% extends 'admin_layout.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .bgclr {
-            background-color: rgb(248, 170, 168);
-        }
-    </style>
-</head>
-
-<body>
-    <form action="{% url 'admin_edit_layout' %}" method="post">{% csrf_token %}
-        <select onchange="this.form.submit()" name="select_id">
-            <option value="">--select--</option>
-            {% for p in context %}
-            <option value="{{ p.id }}"> {{ p.id }}</option>
-            {% endfor %}
-            
-        </select>
-    </form>
-
-    <form action="{% url 'admin_update_layout' %}" method="post" name="admin_layout" 
-    enctype="multipart/form-data">{% csrf_token %}
-        <div class="bgclr" width="50" height="auto">
-            {% if n %}
-            <h3 id="image">
-                <img src="{{ item.n }}" width="200" height="auto">
-
-            </h3>
-            {% endif %}
+<div class="container">
+    <div class="card shadow">
+        <div class="card-header text-white" style="background-color: rgb(201, 7, 7);">
+            <h3 class="mb-0">Add Product</h3>
         </div>
-        <!-- <div class="row">
-            <div class="col">
-
-                <label for="">Product image</label>
-            </div>
-            <div class="col">
-
-                <input type="file" name="file_name" value="choose file">
-            </div>
-        </div> -->
-        <div class="container">
-            <div class="row">
-                <div class="col">
-
-                    <label for="">product title</label>
+        <div class="card-body" style="background-color: rgba(28, 13, 13, 0.173);">
+            <form action="{% url 'admin_add_layout' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+               
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Product ID</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="id" class="form-control" placeholder=" product id"
+                            value="{{ context.id }}">
+                    </div>
                 </div>
-                <div class="col">
-
-                    <input type="text" name="product_title" value="{{ item.item_name }}" disabled>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Product Image</label>
+                    <div class="col-sm-9">
+                        <img src="{{ context.item_image }}" class="card-img-top" alt="product image"
+                            style="height: auto; max-height: 200px; object-fit: contain;">
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
 
-                    <label for="">product description</label>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Product Title</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="product_title" class="form-control" placeholder=" product title"
+                            value="{{ context.item_name }}">
+                    </div>
                 </div>
-                <div class="col">
 
-                    <input type="text" name="product_description" value="{{ item.item_description }}" disabled>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Product Description</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="product_description" class="form-control" placeholder="description"
+                            value="{{ context.item_description }}">
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
 
-                    <label for="">category</label>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Category</label>
+                    <div class="col-sm-9">
+                        <select name="category" id="category" class="form-select" value="{{ context.category }}">
+                            <option value="mens">Mens</option>
+                            <option value="womens">Womens</option>
+                            <option value="girls">Girls</option>
+                            <option value="boys">Boys</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col">
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Size</label>
+                    <div class="col-sm-9">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="product_size" value="small"
+                                id="sizeSmall">
+                            <label class="form-check-label" for="sizeSmall">Small</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="product_size" value="medium"
+                                id="sizeMedium">
+                            <label class="form-check-label" for="sizeMedium">Medium</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="product_size" value="large"
+                                id="sizeLarge">
+                            <label class="form-check-label" for="sizeLarge">Large</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="product_size" value="extra large"
+                                id="sizeXL">
+                            <label class="form-check-label" for="sizeXL">Extra Large</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Quantity</label>
+                    <div class="col-sm-9">
+                        <input type="number" name="product_quantity" class="form-control" placeholder="quantity"
+                            value="{{ context.item_quantity }}">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Old Price</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="old_price" class="form-control" placeholder="Old price"
+                            value="{{ item.old_price }}">
+                    </div>
+                </div>
 
-                    <select name="category" id="category" disabled>
-                        <option value="mens">mens</option>
-                        <option value="womens">womens</option>
-                        <option value="girls">girls</option>
-                        <option value="boys">boys</option>
-                    </select>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Offer</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="offer" class="form-control" placeholder="offer"
+                            value="{{ context.offer }}">
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
 
-                    <label for="">old price</label>
-                </div>
-                <div class="col">
-                    <del>
+                <!-- <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">New Price</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="new_price" class="form-control" placeholder="Enter new price">
+                    </div>
+                </div> -->
 
-                        <input type="text" name="old_price" value="{{ item.old_price }}">
-                    </del>
+                <div class="text-end">
+                    <button type="submit" class="btn text-white" style="background-color: rgb(192, 9, 9);">save
+                        changes</button>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
 
-                    <label for="">offer</label>
+                {% if upload %}
+                <div class="mt-4 text-center">
+                    <h4 class="text-success">{{ upload }}</h4>
                 </div>
-                <div class="col">
+                {% endif %}
 
-                    <input type="text" name="offer" value="{{ item.offer }}">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-
-                    <label for="">new Price</label>
-                </div>
-                <div class="col">
-
-                    <input type="text" name="new_price" value="{{ item.new_price }}" disabled>
-                </div>
-            </div>
+            </form>
         </div>
-       <div class="row">
-        <div class="col">
+    </div>
+</div>
 
-            <button type="submit">
-                UPDATE
-            </button>
-        </div>
-       </div>
-       <div class="row">
-        <div class="col">
-
-            <button type="submit">
-                DELETE
-            </button>
-        </div>
-       </div>
-       <div class="row">
-        <h2 name="upload">
-            {% if upload %}
-            {{ upload }}
-            {% endif %}
-        </h2>
-       </div>
-    </form>
-</body>
-
-</html>
+{% endblock %}
