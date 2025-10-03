@@ -5,16 +5,20 @@ from .models import Product
 class ProductAdmin(admin.ModelAdmin):
 
     list_display =(
-    'item_image',
+    'item_image1',
+    'item_image2',
+    'item_image3',
+    'item_image4',
     'item_name',
     'item_description',
     'new_price',
     'old_price',
     'offer',
     'category',
-    'item_quantity',
-    'item_size',
-   
+    'small_size',
+    'medium_size',
+    'large_size',
+    'extralarge_size',
 
 
     )

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    {% load static %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Urban Tees</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarIcons"
+                aria-controls="navbarIcons" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarIcons">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'wishlist_page' %}">
+                            <i class="bi bi-heart-fill text-danger fs-5"></i>
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-3">
+                        <a class="nav-link position-relative" href="{% url 'cart_page' %}">
+                            <i class="bi bi-cart-fill text-light fs-5"></i>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 justify-content-evenly">
+        <div class="container">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if not selected_category %}active{% endif %}"
+                            href="{% url 'user_products' %}">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if selected_category == 'mens' %}active{% endif %}"
+                            href="{% url 'user_category_products' 'mens' %}">Mens
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if selected_category == 'womens' %}active{% endif %}"
+                            href="{% url 'user_category_products' 'womens' %}">Womens
+                        </a>
+                    </li>
+
+
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if selected_category == 'girls' %}active{% endif %}"
+                            href="{% url 'user_category_products' 'girls' %}">Girls</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if selected_category == 'boys' %}active{% endif %}"
+                            href="{% url 'user_category_products' 'boys' %}">Boys</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="grid text-center container-fluid" style="--bs-columns: 3;">
+
+        <div class="container mt-4">
+            <div class="row g-3">
+                {% for pro in item %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+                    <div class="card w-100">
+                        <a href="{% url 'user_single_product' pro.id %}">
+
+                            <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
+                                style="height: auto; max-height: 200px; object-fit: contain;">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ pro.item_name }}</h5>
+                            <h5 class="card-text btn btn-outline-dark btn-sm disabled ">{{ pro.item_description }}</h5>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">S{{ pro.small_size }}</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">M{{ pro.medium_size }}</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">L{{ pro.large_size }}</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">XL{{ pro.extralarge_size }}</p>
+                        </div>
+                        <ul class="d-flex justify-content-between me-5">
+                            <li class="list-group-item text-danger fs-2"><strong></strong> {{ pro.new_price }}</li>
+                            <li class="list-group-item fs-3"><del>{{ pro.old_price }}</del></li>
+                            <li class="list-group-item text-success fs-2">{{ pro.offer }} %</li>
+                        </ul>
+                        <ul class=" d-flex justify-content-between me-5">
+
+                            <a class="btn btn-outline-success" href="{% url 'wishlist_page'  %}">
+                                <i class="bi bi-heart"></i> </a>
+
+                            <a class="btn btn-outline-danger" href="{% url 'cart_page' %}">
+                                <i class="bi bi-cart-fill"></i>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="mb-4">
+            {% if selected_category %}
+            {{ selected_category|title }}'s Products
+            {% else %}
+            All Products
+            {% endif %}
+        </h2>
+
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    {% if product.item_image %}
+                    <img src="{{ product.item_image.url }}" class="card-img-top" alt="{{ product.item_name }}"
+                        style="height: 250px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.item_name }}</h5>
+                        <p class="card-text text-muted">{{ product.category|title }}</p>
+                        <p class="card-text">
+                            <strong>${{ product.new_price }}</strong>
+                            {% if product.old_price %}
+                            <span class="text-decoration-line-through text-muted">${{ product.old_price }}</span>
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'user_single_product' product.id %}" class="btn btn-primary btn-sm">View
+                            Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No products found in this category.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+
+</html>
