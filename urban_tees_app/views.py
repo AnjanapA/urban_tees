@@ -143,46 +143,51 @@ def admin_edit_product(request,id):
     if request.method == 'POST':
         product_title=request.POST.get('product_title')
         product_description=request.POST.get('product_description')
-        product_size=request.POST.get('product_size')
-        product_quantity=int(request.POST.get('product_quantity'))
         old_price=int(request.POST.get('old_price'))
-        offer=int(request.POST.get('offer'))
         category=request.POST.get('category')
+        offer=int(request.POST.get('offer'))
+
+# product_size
+        small_size=request.POST.get('small_size')
+        medium_size=request.POST.get('medium_size')
+        large_size=request.POST.get('large_size')
+        extralarge_size=request.POST.get('extralarge_size')
 
         new_price=old_price*(offer/100)
 
-        f=request.FILES['file_name']
-        n=os.path.join('static/images/',f.name)
-
+        print(new_price)
+        print(old_price)
         context=Product.objects.filter(id=id).update(
-        item_image=n,
-        item_name=product_title,
-        item_description=product_description,
-        item_size=product_size,
-        item_quantity=product_quantity,
-        new_price=new_price,
-        old_price=old_price,
-        offer=offer,
-        category=category
-        )
+            item_name=product_title,
+            item_description=product_description,
+            old_price=old_price,
+            new_price=new_price,
+            offer=offer,
+            category=category,
+            small_size=small_size,
+            medium_size=medium_size,
+            large_size=large_size,
+            extralarge_size=extralarge_size
+
+            )
 
         upload='changes updated successfully'
     else:
         upload = "No changes."
 
 
-    return render(request,'admin_edit_product.html',{'context':context,'upload':upload})
+    return redirect('admin_view_product')
 
-def admin_delete_layout(request,id):
-  
-  if request.method=='POST':
+# def admin_update_product(request):
+#     return redirect(request,'/admin_view_product.html/')
 
-    id=int(request.POST.get('id'))
 
+
+def admin_delete_product(request, id):
+    if request.method == 'POST':
+        id=int(request.POST.get('id'))
     context=Product.objects.filter(id=id).delete()
-    return render(redirect,'/admin_view_product.html/')
-
-
+    return redirect('admin_view_product')
 
 # user
 def user_products(request, category=None):

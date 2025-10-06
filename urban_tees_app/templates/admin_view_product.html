@@ -38,37 +38,30 @@
             {% for pro in item %}
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
                 <div class="card w-100">
-                    <img src="{{ pro.item_image1 }}" class="card-img-top" alt="product image"
+                    <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
                         style="height: auto; max-height: 200px; object-fit: contain;">
                     <div class="card-body">
                         <h5 class="card-title">{{ pro.item_name }}</h5>
                         <p class="card-text">{{ pro.item_description }}</p>
-                        <p class="card-text text-muted" id="select_category">{{ pro.category }}</p>
-                        {% if pro.item_size == "small" %}
-                        <p class="btn btn-outline-dark btn-sm disabled" id="select_item_size">S</p>
-                        {% endif %}
-                        {% if pro.item_size == "medium" %}
-                        <p class="btn btn-outline-dark btn-sm disabled" id="select_item_size">M</p>
-                        {% endif %}
-                        {% if pro.item_size == "large" %}
-                        <p class="btn btn-outline-dark btn-sm disabled" id="select_item_size">L</p>
-                        {% endif %}
-                        {% if pro.item_size == "extralarge" %}
-                        <p class="btn btn-outline-dark btn-sm disabled" id="select_item_size">XL/p>
-                            {% endif %}
+                        <p class="card-text">{{ pro.category }}</p>
+                    </div>
+                    <div>
 
-                        <p class="card-text text-muted">{{ pro.item_quantity }}</p>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">S</p>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">M</p>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">L</p>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">XL</p>
                     </div>
                     <ul class="d-flex justify-content-between me-5">
-                        <li class="list-group-item text-danger fs-2"><strong></strong> {{ pro.new_price }}</li>
-                        <li class="list-group-item fs-3"><del>{{ pro.old_price }}</del></li>
-                        <li class="list-group-item text-success fs-2">{{ pro.offer }} %</li>
+                        <li class="list-group-item text-danger fs-5"><strong></strong> {{ pro.new_price }}</li>
+                        <li class="list-group-item fs-5"><del>{{ pro.old_price }}</del></li>
+                        <li class="list-group-item text-success fs-5">{{ pro.offer }} %</li>
                     </ul>
                     <ul class=" d-flex justify-content-between me-5">
 
                         <a class="btn btn-outline-success" href="{% url 'admin_edit' pro.id  %}">edit</a>
 
-                        <a class="btn btn-outline-danger" href="{% url 'admin_delete_layout' pro.id %}">delete</a>
+                        <a class="btn btn-outline-danger" href="{% url 'admin_delete_product' pro.id %}">delete</a>
                     </ul>
                 </div>
             </div>

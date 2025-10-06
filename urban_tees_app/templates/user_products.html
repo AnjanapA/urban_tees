@@ -87,11 +87,14 @@
                         </a>
                         <div class="card-body">
                             <h5 class="card-title">{{ pro.item_name }}</h5>
-                            <h5 class="card-text btn btn-outline-dark btn-sm disabled ">{{ pro.item_description }}</h5>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">S{{ pro.small_size }}</p>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">M{{ pro.medium_size }}</p>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">L{{ pro.large_size }}</p>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">XL{{ pro.extralarge_size }}</p>
+                            <h5 class="card-text ">{{ pro.item_description }}</h5>
+                        </div>
+                        <div>
+
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">S</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">M</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">L</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">XL</p>
                         </div>
                         <ul class="d-flex justify-content-between me-5">
                             <li class="list-group-item text-danger fs-2"><strong></strong> {{ pro.new_price }}</li>
@@ -114,7 +117,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <!-- <div class="container">
         <h2 class="mb-4">
             {% if selected_category %}
             {{ selected_category|title }}'s Products
@@ -149,7 +152,7 @@
             <p class="text-muted">No products found in this category.</p>
             {% endfor %}
         </div>
-    </div>
+    </div> -->
 
 </body>
 

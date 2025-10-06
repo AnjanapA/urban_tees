@@ -8,7 +8,7 @@
             <h3 class="mb-0">Add Product</h3>
         </div>
         <div class="card-body" style="background-color: rgba(28, 13, 13, 0.173);">
-            <form action="{% url 'admin_add_product' %}" method="post" enctype="multipart/form-data">
+            <form action="{% url 'admin_edit_product' context.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="mb-3 row">
@@ -21,8 +21,9 @@
                 <div class="mb-3 row">
                     <label class="col-sm-3 col-form-label">Product Image</label>
                     <div class="col-sm-9">
-                        <img src="{{ context.item_image }}" class="card-img-top" alt="product image"
+                        <img src="{% static context.item_image1 %}" class="card-img-top" alt="product image"
                             style="height: auto; max-height: 200px; object-fit: contain;">
+
                     </div>
                 </div>
 
@@ -54,50 +55,38 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Size</label>
+                    <label class="col-sm-3 col-form-label">small</label>
                     <div class="col-sm-9">
-                        {% with selected_sizes=context.get_sizes %}
-                        <div class="mb-3 row">
-                            <label class="col-sm-3 col-form-label">Size</label>
-                            <div class="col-sm-9">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="product_size" value="small"
-                                        id="sizeSmall" {% if 'small' in selected_sizes %}checked{% endif %}>
-                                    <label class="form-check-label" for="sizeSmall">Small</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="product_size" value="medium"
-                                        id="sizeMedium" {% if 'medium' in selected_sizes %}checked{% endif %}>
-                                    <label class="form-check-label" for="sizeMedium">Medium</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="product_size" value="large"
-                                        id="sizeLarge" {% if 'large' in selected_sizes %}checked{% endif %}>
-                                    <label class="form-check-label" for="sizeLarge">Large</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="product_size"
-                                        value="extra large" id="sizeXL" {% if 'extra_large' in selected_sizes
-                                        %}checked{% endif %}>
-                                    <label class="form-check-label" for="sizeXL">Extra Large</label>
-                                </div>
-                            </div>
-                        </div>
-                        {% endwith %}
+                        <input type="number" name="small_size" class="form-control" placeholder="small_size"
+                            value="{{ context.small_size }}">
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Quantity</label>
+                    <label class="col-sm-3 col-form-label">medium</label>
                     <div class="col-sm-9">
-                        <input type="number" name="product_quantity" class="form-control" placeholder="quantity"
-                            value="{{ context.item_quantity }}">
+                        <input type="number" name="medium_size" class="form-control" placeholder="medium_size"
+                            value="{{ context.medium_size }}">
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">Old Price</label>
+                    <label class="col-sm-3 col-form-label">large</label>
+                    <div class="col-sm-9">
+                        <input type="number" name="large_size" class="form-control" placeholder="large_size"
+                            value="{{ context.large_size }}">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">extra large</label>
+                    <div class="col-sm-9">
+                        <input type="number" name="extralarge_size" class="form-control" placeholder="extralarge_size"
+                            value="{{ context.extralarge_size }}">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label">Price</label>
                     <div class="col-sm-9">
                         <input type="text" name="old_price" class="form-control" placeholder="Old price"
-                            value="{{ item.old_price }}">
+                            value="{{ context.old_price }}">
                     </div>
                 </div>
 
