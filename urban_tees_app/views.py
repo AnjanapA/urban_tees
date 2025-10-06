@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.conf import settings
-from .models import Product
+from .models import Product,User
 import os
 import json
 
@@ -85,11 +85,11 @@ def admin_add_product(request):
         if file1:
             n1=os.path.join('/images/',file1.name)
         if file2:
-            n2=os.path.join('static/images/',file2.name)
+            n2=os.path.join('/images/',file2.name)
         if file3:
-            n3=os.path.join('static/images/',file3.name)
+            n3=os.path.join('/images/',file3.name)
         if file4:
-            n4=os.path.join('static/images/',file4.name)
+            n4=os.path.join('/images/',file4.name)
                 
             context=Product(
             item_image1=n1,
@@ -155,8 +155,6 @@ def admin_edit_product(request,id):
 
         new_price=old_price*(offer/100)
 
-        print(new_price)
-        print(old_price)
         context=Product.objects.filter(id=id).update(
             item_name=product_title,
             item_description=product_description,
@@ -206,8 +204,42 @@ def user_single_product(request, id):
     return render(request, 'user_single_product.html', {'item':item_details})
 
 def wishlist_page(request):
+    
     return render(request, 'wish_list.html')
 
 
 def cart_page(request):
     return render(request, 'add_to_cart.html')
+
+def account(request):
+    return render(request, 'account.html')
+
+def register(request):
+    if request.method == 'POST':
+        username=request.POST.get('username')
+        password=request.POST.get('password')
+        address=request.POST.get('address')
+        mail=request.POST.get('email')
+        phone=request.POST.get('phone')
+        role=request.POST.get('role')
+
+        context=User(
+            username=username,
+            password=password,
+            address=address,
+            mail=mail,
+            phone=phone,
+            role=role,
+            )
+        
+    context.save()
+
+    return render(request, 'account.html')
+
+
+# def login(request,id):
+#     if request.method == 'POST':
+#         id=int(request.POST.get('id'))
+#     user_details = User.objects.all()
+
+#     return redirect('home')

@@ -17,21 +17,39 @@ class Product(models.Model):
     new_price = models.IntegerField()
     old_price = models.IntegerField()
     offer = models.IntegerField()
-    # category = models.CharField(max_length=255)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
-    # item_quantity = models.IntegerField()
     small_size=models.IntegerField()
     medium_size=models.IntegerField()
     large_size=models.IntegerField()
     extralarge_size=models.IntegerField()
+    # wishlist=models.BooleanField()
 
-    # item_size = models.TextField(default='[]', blank=True)
-
-    # def set_sizes(self, sizes_list):
-    #     self.item_sizes = json.dumps(sizes_list)
-
-    # def get_sizes(self):
-    #     return json.loads(self.item_sizes)
 
     def __str__(self):
         return self.item_name
+
+
+# class Login(models.Model):
+#     user_name=models.CharField(max_length=255)
+#     password=models.CharField(max_length=8)
+
+# class Register(models.Model):
+#     full_name=models.CharField(max_length=255)
+#     mail=models.EmailField(_(""), max_length=254)
+#     address=models.CharField(max_length=255)
+#     models.PhoneNumberField(_(""))
+#     models.EmailField(_(""), max_length=254)
+
+
+class User(models.Model):
+    username=models.CharField(max_length=255)
+    mail=models.EmailField("Email", max_length=254)
+    phone=models.CharField("Phone", max_length=255)
+    address=models.CharField(max_length=255)
+    place=models.CharField(max_length=255)
+    city=models.CharField(max_length=255)
+    pincode=models.CharField(max_length=6)
+    role=models.CharField(max_length=255)
+    activity=models.CharField(max_length=255)
+    password=models.CharField(max_length=8)
+

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product
+from .models import Product,User
 
 # Register your models here.
 class ProductAdmin(admin.ModelAdmin):
@@ -19,7 +19,26 @@ class ProductAdmin(admin.ModelAdmin):
     'medium_size',
     'large_size',
     'extralarge_size',
+    # 'wishlist'
 
 
     )
 admin.site.register(Product,ProductAdmin)
+
+class UserAdmin(admin.ModelAdmin):
+
+    list_display =(
+    'username',
+    'mail',
+    'phone',
+    'address',
+    'place',
+    'city',
+    'pincode',
+    'role',
+    'activity',
+    'password',
+
+
+    )
+admin.site.register(User,UserAdmin)
