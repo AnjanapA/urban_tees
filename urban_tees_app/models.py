@@ -42,14 +42,23 @@ class Product(models.Model):
 
 
 class User(models.Model):
+    ROLES = [
+    ('user', 'User'),
+    ('admin', 'Admin'),
+        ]
     username=models.CharField(max_length=255)
-    mail=models.EmailField("Email", max_length=254)
+    email=models.EmailField("Email", max_length=254)
     phone=models.CharField("Phone", max_length=255)
     address=models.CharField(max_length=255)
     place=models.CharField(max_length=255)
     city=models.CharField(max_length=255)
     pincode=models.CharField(max_length=6)
-    role=models.CharField(max_length=255)
+    role=models.CharField(max_length=10, choices=ROLES)
     activity=models.CharField(max_length=255)
     password=models.CharField(max_length=8)
+    confirm_password=models.CharField(max_length=8,null=True,blank=True)
+
+    def __str__(self):
+        return self.email
+
 

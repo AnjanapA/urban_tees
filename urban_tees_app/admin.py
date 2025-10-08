@@ -29,7 +29,7 @@ class UserAdmin(admin.ModelAdmin):
 
     list_display =(
     'username',
-    'mail',
+    'email',
     'phone',
     'address',
     'place',
@@ -38,7 +38,6 @@ class UserAdmin(admin.ModelAdmin):
     'role',
     'activity',
     'password',
-
-
+    'confirm_password'
     )
 admin.site.register(User,UserAdmin)

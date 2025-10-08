@@ -4,12 +4,12 @@ from django.template import loader
 from django.conf import settings
 from .models import Product,User
 import os
-import json
-
+from .forms import LoginForm,RegisterForm,UserInfoForm
+from django.contrib import messages
 
 # Create your views here.
-def login(request):
-    return render(request,'login.html')
+# def login(request):
+#     return render(request,'login.html')
 
 def main(request):
     return render(request,'main.html')
@@ -176,9 +176,6 @@ def admin_edit_product(request,id):
 
     return redirect('admin_view_product')
 
-# def admin_update_product(request):
-#     return redirect(request,'/admin_view_product.html/')
-
 
 
 def admin_delete_product(request, id):
@@ -188,6 +185,84 @@ def admin_delete_product(request, id):
     return redirect('admin_view_product')
 
 # user
+def web_home(request):
+    return render(request, 'web_home.html')
+
+def home(request):
+    return render(request, 'home.html')
+
+def account(request):
+    return render(request, 'account.html')
+
+def logout(request):
+    return redirect('web_home')
+
+def register(request):
+    if request.method == 'POST':
+            reg_form=RegisterForm(request.POST)
+            print("register")
+
+            if reg_form.is_valid():
+                password =reg_form.cleaned_data['password']
+                confirm =reg_form.cleaned_data['confirm_password']
+                if password == confirm:
+                    myuser = User.objects.create(
+                        phone=reg_form.cleaned_data['phone'],
+                        username=reg_form.cleaned_data['username'],
+                        email=reg_form.cleaned_data['email'],
+                        password=password
+                    )
+                    messages.success(request, "Account created successfully!")
+                    return redirect('login')
+                
+                else:
+                    messages.error(request, "Passwords do not match")
+                    return render(request,'account.html',{'form':reg_form,'value':'register'})
+            return render(request,'account.html',{'form':reg_form,'value':'register'})
+    else:
+        
+        reg_form1=RegisterForm()
+        return render(request,'account.html',{'form1':reg_form1,'value':'register'})
+
+
+def login(request):
+    if request.method == 'POST':
+        if request.POST.get('loginvalid')=="login":
+            return redirect('home')
+        else:
+                
+            form=LoginForm(request.POST)
+
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                try:
+                    myuser=User.objects.get(email=email)
+                    password = form.cleaned_data['password']
+                    if myuser.password==password:
+                        request.session['user_id']=myuser.id
+                        return redirect('home')
+                    else:
+                        messages.error(request,'Invalid username or password.')
+                except User.DoesNotExist:
+                    messages.error(request,'user not exist.')
+        return render(request,'account.html',{'form':form,'value':'login'})
+    else:
+        form=LoginForm()
+        return render(request,'account.html',{'form':form,'value':'login'})
+
+
+def userinfo(request):
+    if request.method == 'POST':
+        form = UserInfoForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            return render(request, 'home.html', {'data': cleaned_data})
+    else:
+        form = UserInfoForm()
+
+    return render(request, 'userinfo.html', {'form': form})
+
+
 def user_products(request, category=None):
     categories = ['mens', 'womens', 'girls', 'boys']
     if category in categories:
@@ -209,37 +284,6 @@ def wishlist_page(request):
 
 
 def cart_page(request):
-    return render(request, 'add_to_cart.html')
-
-def account(request):
-    return render(request, 'account.html')
-
-def register(request):
-    if request.method == 'POST':
-        username=request.POST.get('username')
-        password=request.POST.get('password')
-        address=request.POST.get('address')
-        mail=request.POST.get('email')
-        phone=request.POST.get('phone')
-        role=request.POST.get('role')
-
-        context=User(
-            username=username,
-            password=password,
-            address=address,
-            mail=mail,
-            phone=phone,
-            role=role,
-            )
-        
-    context.save()
-
-    return render(request, 'account.html')
+    return render(request, 'cart_page.html')
 
 
-# def login(request,id):
-#     if request.method == 'POST':
-#         id=int(request.POST.get('id'))
-#     user_details = User.objects.all()
-
-#     return redirect('home')

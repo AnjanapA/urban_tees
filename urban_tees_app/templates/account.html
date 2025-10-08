@@ -15,76 +15,201 @@
 
 <body style="font-family: 'Poppins', sans-serif; background-color: #f8f9fa;">
 
-    <div class="container" style="max-width: 400px; margin-top: 50px;">
+    <div class="container" style="max-width: 400px; margin-top: 50px;min-height: 500px;">
+
         <div class="bg-white p-4 rounded shadow">
-
-<div class="d-flex justify-content-between position-relative mb-4"
-    style="border-radius: 30px; overflow: hidden; border: 2px solid none; width: 300px; margin: 50px auto;">
-
-    <button onclick="showLogin()" type="button"
-      class="btn btn-dark w-50 rounded-0"
-      style="border-top-left-radius: 30px; border-bottom-left-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-      Login
-    </button>
-
-    <button onclick="showRegister()" type="button"
-      class="btn btn-warning w-50 rounded-0 text-black"
-      style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-      Register
-    </button>
-
-    <!-- <div id="Indicator"
-      style="position: absolute; bottom: 0; left: 0; height: 20px; width: 100%; background: orange; transition: all 0.3s ease;">
-    </div> -->
-  </div>
-            <form action="{% url 'login' user_details.id %}" method="post" enctype="multipart/form-data" id="LoginForm" 
-                style="display: block; transition: all 0.3s ease;">
+            {% if value == 'login' %}
+            <form action="{% url 'login' %}" method="post" enctype="multipart/form-data" id="LoginForm"
+                style="display: block; transition: all 0.3s ease;" onload="loginload()">
                 {% csrf_token %}
-                <input type="text" name="username" maxlength="10" required class="form-control mb-3"
-                    placeholder="Username">
-                <input type="password" name="password" minlength="6" required class="form-control mb-3"
-                    placeholder="Password">
-                <button type="submit" name="login" class="btn btn-success w-100">Login</button>
-                <a href="#" style="display: block; text-align: center; margin-top: 10px;">Forgot password?</a>
+                <div class="d-flex justify-content-between position-relative mb-4"
+                    style="border-radius: 30px; overflow: hidden; border: 2px solid none; width: 300px; margin: 50px auto;">
+
+                    <!-- <button onclick="showLogin()" type="submit" name="login"
+                        class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        Login
+                        
+                    </button>
+                    <button onclick="showRegister()" type="submit" name="register"
+                        class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        Register
+                    </button> -->
+                    <a href="{% url 'login' %}" onclick="showLogin()" class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        login
+                    </a>
+                    <a href="{% url 'register' %}" onclick="showRegister()"
+                        class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        register
+                    </a>
+
+
+
+                </div>
+
+                <div class=" row d-flex justify-content-between position-relative mb-4">
+
+
+                    {{ form.email }}
+                </div>
+                <div class=" row d-flex justify-content-between position-relative mb-4">
+
+                    {{ form.password }}
+                </div>
+                <!-- <div class=" row d-flex justify-content-between position-relative mb-4">
+
+                    <input type="submit" class="btn btn-success w-100" value="Login" id="loginvalid" name="loginvalid">
+                </div> -->
+
+                <button type="submit" name="login" class="btn btn-primary w-100" value="login" id="loginvalid"
+                    name="loginvalid">
+                    login</button>
+            </form>
+            {% else %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger mt-3">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+
+            
+            <form action="{% url 'register' %}" method="post" enctype="multipart/form-data" id="RegForm"
+                style="display: block; transition: all 0.3s ease;" onload="registerload()">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between position-relative mb-4"
+                    style="border-radius: 30px; overflow: hidden; border: 2px solid none; width: 300px; margin: 50px auto;">
+
+                    <!-- <button onclick="showLogin()" type="submit" name="login"
+                        class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        Login
+
+                    </button>
+
+
+                    <button onclick="showRegister()" type="submit" name="register"
+                        class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        Register
+                    </button> -->
+
+                    <a href="{% url 'login' %}" onclick="showLogin(event)" class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        login
+                    </a>
+                    <a href="{% url 'register' %}" onclick="showRegister(event)"
+                        class="btn btn-warning w-50 rounded-0 text-black"
+                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
+                        register
+                    </a>
+
+
+                </div>
+
+                <div class=" row d-flex justify-content-between position-relative mb-4">
+                    {{ form1.username }}
+                </div>
+                <div class=" row d-flex justify-content-between position-relative mb-4">
+
+                    {{ form1.email }}
+                </div>
+                <div class=" row d-flex justify-content-between position-relative mb-4">
+
+                    {{ form1.password }}
+                </div>
+                <div class=" row d-flex justify-content-between position-relative mb-4">
+
+                    {{ form1.confirm_password }}
+                </div>
+                <div class=" row d-flex justify-content-between position-relative mb-4">
+
+
+                    {{ form1.phone }}
+                </div>
+                <div class=" row d-flex justify-content-between position-relative mb-4" style="display: block;">
+
+
+                    <select name="role">
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <button type="submit" name="register" class="btn btn-primary w-100" value="register" id="registervalid"
+                    name="registervalid" style="display: block;">
+                    Register</button>
             </form>
 
-            <form action="{% url 'register' %}" method="post" enctype="multipart/form-data" id="RegForm"  
-                style="display: none; transition: all 0.3s ease;">
-                {% csrf_token %}
-                <input type="text" name="username" maxlength="10" minlength="3" required class="form-control mb-3"
-                    placeholder="Username">
-                <input type="email" name="email" required class="form-control mb-3" placeholder="Email">
-                <input type="password" name="password" minlength="6" required class="form-control mb-3"
-                    placeholder="Password">
-                <input type="text" name="address" minlength="3" required class="form-control mb-3"
-                    placeholder="Address">
-                <input type="text" name="phone" minlength="5" required class="form-control mb-3" placeholder="Phone">
-                <select name="role" id="role" minlength="5" required class="form-control mb-3">
-                    <option value="user">user</option>
-                    <option value="admin">admin</option>
-                </select>
-                <button type="submit" name="register" class="btn btn-primary w-100">Register</button>
-            </form>
+            {% endif %}
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger mt-3">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+
         </div>
     </div>
+<!-- <script>
+        const loginForm = document.getElementById("LoginForm");
+        const regForm = document.getElementById("RegForm");
 
-    <script>
+        function showRegister(event) {
+            if (event) event.preventDefault();
+
+            loginForm.style.opacity = "0";
+            loginForm.style.display = "none";
+
+            regForm.style.display = "block";
+            setTimeout(() => {
+                regForm.style.opacity = "1";
+            }, 10);
+        }
+
+        function showLogin(event) {
+            if (event) event.preventDefault();
+
+            regForm.style.opacity = "0";
+            regForm.style.display = "none";
+
+            loginForm.style.display = "block";
+            setTimeout(() => {
+                loginForm.style.opacity = "1";
+            }, 10);
+        }
+    </script> -->
+
+    <!-- <script>
         const loginForm = document.getElementById("LoginForm");
         const regForm = document.getElementById("RegForm");
         // const indicator = document.getElementById("Indicator");
 
-        function showRegister() {
+        function showRegister(event) {
+            loginForm.style.transform = "translateY(-100%)";
+            regForm.style.transform = "translateY(0)"
             loginForm.style.display = "none";
             regForm.style.display = "block";
+            
+        
             indicator.style.transform = "translateX(100%)";
+
+            event.preventDefault();
         }
 
-        function showLogin() {
+        function showLogin(event) {
+            loginForm.style.transform = "translateY(0)";
+            regForm.style.transform = "translateY(-100%)"
             loginForm.style.display = "block";
             regForm.style.display = "none";
             indicator.style.transform = "translateX(0)";
         }
-    </script>
+
+    </script> -->
 
 </body>
 
