@@ -27,6 +27,7 @@ path('home',views.home,name='home'),
 path('logout',views.logout,name='logout'),
 path('userinfo',views.userinfo,name='userinfo'),
 
+path('cart_slide/<int:id>/',views.cart_slide,name='cart_slide'),
 
 
 path('user_layout',views.user_layout,name='user_layout'),
@@ -35,7 +36,8 @@ path('user_products/<str:category>/', views.user_products, name='user_category_p
 path('user_single_product/<int:id>/', views.user_single_product, name='user_single_product'),
 path('wishlist_page', views.wishlist_page, name='wishlist_page'),
 path('cart_page', views.cart_page, name='cart_page'),
-
-
+path('user_order_review/<int:id>/', views.user_order_review, name='user_order_review'),
+path('user_payment/<int:id>/', views.user_payment, name='user_payment'),
+path('myorder_page', views.myorder_page, name='myorder_page'),
 ]
 

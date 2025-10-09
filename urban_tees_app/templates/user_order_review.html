@@ -1,0 +1,95 @@
+{% extends 'user_layout.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row bg-white p-4 shadow rounded">
+        <div class="col-md-5 text-center">
+
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="{% static item.item_image1 %}" class="d-block w-100" alt="Image 1"
+                            style="height: auto; max-height: 200px; object-fit: contain;">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static item.item_image2 %}" class="d-block w-100" alt="Image 2"
+                            style="height: auto; max-height: 200px; object-fit: contain;">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static item.item_image3 %}" class="d-block w-100" alt="Image 3"
+                            style="height: auto; max-height: 200px; object-fit: contain;">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static item.item_image4 %}" class="d-block w-100" alt="Image 4"
+                            style="height: auto; max-height: 200px; object-fit: contain;">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel"
+                    data-bs-slide="prev">
+                    <span class="fs-3 text-dark">&lt;</span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel"
+                    data-bs-slide="next">
+                    <span class="fs-3 text-dark">&gt;</span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <h2 class="mb-3">{{ item.item_name }}</h2>
+
+            <p>{{ item.item_description }}</p>
+            <p class="card-text btn btn-outline-dark btn-sm disabled">S{{ item.small_size }}</p>
+            <p class="card-text btn btn-outline-dark btn-sm disabled">M{{ item.medium_size }}</p>
+            <p class="card-text btn btn-outline-dark btn-sm disabled">L{{ item.large_size }}</p>
+            <p class="card-text btn btn-outline-dark btn-sm disabled">XL{{ item.extralarge_size }}</p>
+
+            <p class="h5 mt-3">
+
+                <del class="text-muted">{{ item.old_price }}</del>
+                <p class="text-success">{{ item.new_price }}</p>
+                <p class="text-danger"> {{ item.offer }}%</p>
+            </p>
+
+
+        </div>
+    </div>
+</div>
+<div class="row bg-white p-4 shadow rounded">
+    <div class="row">
+
+        <div class="col-md-3 text-center">
+
+            <p class="h5 mt-3">
+
+                <p class="text-dark">{{ item.new_price }}</p>
+            </p>
+        </div>
+        <div class="col-md-3 text-center">
+
+            <p class="h5 mt-3">
+            <p class="text-success back" style="background-color: rgba(20, 100, 2, 0.158);">
+                {{ item.offer }}OFF</p>
+
+            </p>
+        </div>
+        <div class="col-md-6 text-center">
+
+            <p class="h5 mt-3">
+
+                <a class="btn btn-outline-light me-2" href="{% url 'user_payment' item.id  %}"
+                    style="background-color: rgb(252, 76, 1);" id="Continue">
+
+                    Continue
+                </a>
+            </p>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

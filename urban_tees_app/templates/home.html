@@ -1,69 +1,156 @@
 {% extends 'user_layout.html' %}
 {% load static %}
 {% block content %}
-  <!-- Banner -->
-  <div
-    style="height: 300px; background: url('{% static 'images/banner.jpg' %}') center center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: bold; text-shadow: 2px 2px 5px black;">
-    Welcome to Urban Tees
-  </div>
+<!-- Banner -->
+<div
+  style="height: 300px; background: url('{% static 'images/banner.jpg' %}') center center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: bold; text-shadow: 2px 2px 5px black;">
+  Welcome to Urban Tees
+</div>
 
-  <!-- Featured Products -->
-  <div class="grid text-center container-fluid" style="--bs-columns: 3;">
-
-    <div class="container mt-4">
-      <div class="row g-3">
-        {% for pro in item %}
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
-          <div class="card w-100">
-            <a href="{% url 'user_single_product' pro.id %}">
-
-              <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
-                style="height: auto; max-height: 200px; object-fit: contain;">
-            </a>
-            <div class="card-body">
-              <h5 class="card-title">{{ pro.item_name }}</h5>
-            </div>
-            <ul class="d-flex justify-content-between me-5">
-              <li class="list-group-item text-danger fs-2"><strong></strong> {{ pro.new_price }}</li>
-              <li class="list-group-item fs-3"><del>{{ pro.old_price }}</del></li>
-              <li class="list-group-item text-success fs-2">{{ pro.offer }} %</li>
-            </ul>
-            <ul class=" d-flex justify-content-between me-5">
-
-              <a href="#" class="btn btn-primary">Add to Cart</a>
-              <button class="btn btn-success buy-now-btn" data-image="{% static 'images/men1.jpeg' %}" data-price="25"
-                data-discount="5">Buy Now</button>
-            </ul>
-          </div>
+<!-- Featured Products -->
+<div class="container mt-4">
+  <div class="row g-3">
+    {% for pro in item %}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+      <div class="card w-100">
+        <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
+          style="height: auto; max-height: 200px; object-fit: contain;">
+        <div class="card-body">
+          <h5 class="card-title">{{ pro.item_name }}</h5>
         </div>
-        {% endfor %}
+        <ul class="d-flex justify-content-between me-5">
+          <li class="list-group-item text-danger fs-5"><strong></strong> {{ pro.new_price }}</li>
+          <li class="list-group-item fs-5"><del>{{ pro.old_price }}</del></li>
+          <li class="list-group-item text-success fs-5">{{ pro.offer }} %</li>
+        </ul>
+        <ul class=" d-flex justify-content-between me-5">
+
+          <a class="btn btn-outline-success" href="{% url 'user_order_review' pro.id  %}">buy now</a>
+
+          <a class="btn btn-outline-danger" href="{% url 'cart_slide' pro.id %}" id="cartslide">
+            add to cart</a>
+        </ul>
       </div>
     </div>
+    {% endfor %}
   </div>
+</div>
 
-  <!-- Carousel -->
-  <div class="container mb-5">
-    <div id="mainCarousel" class="carousel slide shadow" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="{% static 'images/caro1.jpeg' %}" class="d-block w-100" style="height: 400px; object-fit: cover;"
-            alt="Slide 1">
-        </div>
-        <div class="carousel-item">
-          <img src="{% static 'images/caro2.jpeg' %}" class="d-block w-100" style="height: 400px; object-fit: cover;"
-            alt="Slide 2">
-        </div>
-        <div class="carousel-item">
-          <img src="{% static 'images/caro3.jpeg' %}" class="d-block w-100" style="height: 400px; object-fit: cover;"
-            alt="Slide 3">
-        </div>
+<!-- Carousel -->
+<div class="container mb-5">
+  <div id="mainCarousel" class="carousel slide shadow" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static 'images/caro1.jpeg' %}" class="d-block w-100" style="height: 400px; object-fit: cover;"
+          alt="Slide 1">
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
+      <div class="carousel-item">
+        <img src="{% static 'images/caro2.jpeg' %}" class="d-block w-100" style="height: 400px; object-fit: cover;"
+          alt="Slide 2">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/caro3.jpeg' %}" class="d-block w-100" style="height: 400px; object-fit: cover;"
+          alt="Slide 3">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</div>
+<div id="cartSidebar"
+  style="position: fixed; top: 0; right: -320px; width: 300px; height: 100%; color: white; background-color: rgb(0, 0, 0); box-shadow: -2px 0 5px rgba(0,0,0,0.3); transition: right 0.3s ease; z-index: 1050; padding: 20px;">
+
+  <button id="closeSidebar" class="btn btn-sm btn-outline-secondary"
+    style="position: absolute; top: 10px; left: 10px;">×</button>
+  <div class="dropdown-menu">
+
+    <h5 class="mb-3">select size and quantity</h5>
+    <div id="button-container">
+      <!-- Initial button -->
+      <button id="toggleButton"
+        style="padding: 8px 16px; background-color: white; color: black; border: 1px solid #ccc;"
+        onclick="showCounter()">
+        S
       </button>
     </div>
+    <div class="dropdown-divider"></div>
+
+    <div class="row">
+      <div class="col-md-8 text-center">
+
+        <p class="h5 mt-3">
+
+          Total Price
+        </p>
+      </div>
+
+      <div class="col-md-3 text-center">
+
+        <p class="h5 mt-3">
+
+        <p class="text-dark">{{ item.new_price }}</p>
+        </p>
+      </div>
+    </div>
+    <div class="row text-center">
+      <a class="btn btn-outline-light me-2" href="" style="background-color: rgb(252, 76, 1);" id="Continue">
+        Place Order
+      </a>
+
+    </div>
+
+    <div class="dropdown-divider"></div>
+    <!-- <a class="dropdown-item"  href="{% url 'web_home' %}">Logout</a> -->
   </div>
-{% endblock %}
+
+  <!-- cart sidebar -->
+  <script>
+    const sidebar = document.getElementById('cartSidebar');
+    const openBtn = document.getElementById('cartslide');
+    const closeBtn = document.getElementById('closeSidebar');
+
+    openBtn.onclick = () => sidebar.style.right = '0';
+    closeBtn.onclick = () => sidebar.style.right = '-320px';
+
+    document.addEventListener('click', function (e) {
+      if (!sidebar.contains(e.target) && !openBtn.contains(e.target)) {
+        sidebar.style.right = '-320px';
+      }
+    });
+
+    let count = 1;
+    const maxCount = 5;
+    const minCount = 1;
+
+    function showCounter() {
+      const container = document.getElementById('button-container');
+
+      container.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button onclick="decrease()" style="background-color: white; color: black; border: 1px solid #ccc; padding: 5px 10px;">-</button>
+        <span id="counterValue" style="min-width: 20px; text-align: center;">${count}</span>
+        <button onclick="increase()" style="background-color: white; color: black; border: 1px solid #ccc; padding: 5px 10px;">+</button>
+      </div>
+    `;
+    }
+
+    function increase() {
+      if (count < maxCount) {
+        count++;
+        document.getElementById('counterValue').innerText = count;
+      }
+    }
+
+    function decrease() {
+      if (count > minCount) {
+        count--;
+        document.getElementById('counterValue').innerText = count;
+      }
+    }
+  </script>
+
+  {% endblock %}

@@ -189,7 +189,9 @@ def web_home(request):
     return render(request, 'web_home.html')
 
 def home(request):
-    return render(request, 'home.html')
+    item_details = Product.objects.all()
+
+    return render(request, 'home.html',{'item':item_details})
 
 def account(request):
     return render(request, 'account.html')
@@ -277,6 +279,23 @@ def user_products(request, category=None):
 def user_single_product(request, id):
     item_details=Product.objects.get(id=id)
     return render(request, 'user_single_product.html', {'item':item_details})
+
+
+def user_order_review(request, id):
+    item_details=Product.objects.get(id=id)
+    return render(request, 'user_order_review.html', {'item':item_details})
+
+def user_payment(request, id):
+    item_details=Product.objects.get(id=id)
+    return render(request, 'user_payment.html', {'item':item_details})
+
+def myorder_page(request):
+    return render(request, 'myorder_page.html')
+
+def cart_slide(request,id):
+    item_details=Product.objects.get(id=id)
+    return render(request, 'home.html', {'item':item_details})
+
 
 def wishlist_page(request):
     
