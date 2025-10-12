@@ -186,7 +186,9 @@ def admin_delete_product(request, id):
 
 # user
 def web_home(request):
-    return render(request, 'web_home.html')
+    item_details = Product.objects.all()
+
+    return render(request, 'web_home.html',{'item':item_details})
 
 def home(request):
     item_details = Product.objects.all()
