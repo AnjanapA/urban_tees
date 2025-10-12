@@ -109,16 +109,16 @@
 
   <!-- cart sidebar -->
   <script>
-    const sidebar = document.getElementById('cartSidebar');
-    const openBtn = document.getElementById('cartslide');
-    const closeBtn = document.getElementById('closeSidebar');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartOpenBtn = document.getElementById('cartslide');
+    const cartCloseBtn = document.getElementById('closeSidebar');
 
-    openBtn.onclick = () => sidebar.style.right = '0';
-    closeBtn.onclick = () => sidebar.style.right = '-320px';
+    cartOpenBtn.onclick = () => cartSidebar.style.right = '0';
+    cartCloseBtn.onclick = () => cartSidebar.style.right = '-320px';
 
     document.addEventListener('click', function (e) {
-      if (!sidebar.contains(e.target) && !openBtn.contains(e.target)) {
-        sidebar.style.right = '-320px';
+      if (!cartSidebar.contains(e.target) && !cartOpenBtn.contains(e.target)) {
+        cartSidebar.style.right = '-320px';
       }
     });
 
