@@ -296,7 +296,7 @@ def myorder_page(request):
 
 def cart_slide(request,id):
     item_details=Product.objects.get(id=id)
-    return render(request, 'home.html', {'item':item_details})
+    return render(request, 'cart_slide.html', {'item':item_details})
 
 
 def wishlist_page(request):

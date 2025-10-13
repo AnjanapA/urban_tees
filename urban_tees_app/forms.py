@@ -40,7 +40,7 @@ class LoginForm(forms.ModelForm):
 class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password','confirm_password' ,'phone']
+        fields = ['username', 'email', 'password','confirm_password' ,'phone','role']
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -61,6 +61,10 @@ class RegisterForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter phone number'
+            }),
+            'role': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter username'
             }),
             
         }

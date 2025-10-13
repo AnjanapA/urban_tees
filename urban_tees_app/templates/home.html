@@ -4,7 +4,7 @@
 <!-- Banner -->
 <div
   style="height: 500px; background: url('{% static 'images/banner.png' %}') center center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: bold; text-shadow: 2px 2px 5px black;">
-  Welcome to Urban Tees
+  <!-- Welcome to Urban Tees -->
 </div>
 
 <!-- Featured Products -->
@@ -27,7 +27,7 @@
 
           <a class="btn btn-outline-success" href="{% url 'user_order_review' pro.id  %}">buy now</a>
 
-          <a class="btn btn-outline-danger" href="{% url 'cart_slide' pro.id %}" id="cartslide">
+          <a class="btn btn-outline-danger" href="{% url 'cart_slide' pro.id  %}" id="cartSlide">
             add to cart</a>
         </ul>
       </div>
@@ -110,7 +110,7 @@
   <!-- cart sidebar -->
   <script>
     const cartSidebar = document.getElementById('cartSidebar');
-    const cartOpenBtn = document.getElementById('cartslide');
+    const cartOpenBtn = document.getElementById('cartSlide');
     const cartCloseBtn = document.getElementById('closeSidebar');
 
     cartOpenBtn.onclick = () => cartSidebar.style.right = '0';
