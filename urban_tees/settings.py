@@ -130,4 +130,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'anjanaprarath@gmail.com'
-EMAIL_HOST_PASSWORD = 'ekxg_ezad_slyn_fums'
+EMAIL_HOST_PASSWORD = 'qlpw mvzo uljx emcw'
+# SESSION_COOKIE_AGE = 300
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+

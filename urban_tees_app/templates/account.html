@@ -76,7 +76,7 @@
             {% endif %}
 
 
-            
+
             <form action="{% url 'register' %}" method="post" enctype="multipart/form-data" id="RegForm"
                 style="display: block; transition: all 0.3s ease;" onload="registerload()">
                 {% csrf_token %}
@@ -97,7 +97,8 @@
                         Register
                     </button> -->
 
-                    <a href="{% url 'login' %}" onclick="showLogin(event)" class="btn btn-warning w-50 rounded-0 text-black"
+                    <a href="{% url 'login' %}" onclick="showLogin(event)"
+                        class="btn btn-warning w-50 rounded-0 text-black"
                         style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
                         login
                     </a>
@@ -117,7 +118,12 @@
 
                     {{ form1.email }}
                 </div>
-                <div class=" row d-flex justify-content-between position-relative mb-4">
+                <button type="submit" name="send_otp" class="btn btn-primary w-100" value="send_otp"
+                    style="display: block;">
+                    send OTP</button>
+
+
+                <!-- <div class=" row d-flex justify-content-between position-relative mb-4">
 
                     {{ form1.password }}
                 </div>
@@ -141,79 +147,21 @@
 
                 <button type="submit" name="register" class="btn btn-primary w-100" value="register" id="registervalid"
                     name="registervalid" style="display: block;">
-                    Register</button>
+                    Register</button> -->
             </form>
 
-            {% endif %}
+            <!-- {% endif %}
 
             {% if messages %}
             {% for message in messages %}
             <div class="alert alert-success mt-3">{{ message }}</div>
             {% endfor %}
             {% endif %}
-
+ -->
 
         </div>
     </div>
-<!-- <script>
-        const loginForm = document.getElementById("LoginForm");
-        const regForm = document.getElementById("RegForm");
-
-        function showRegister(event) {
-            if (event) event.preventDefault();
-
-            loginForm.style.opacity = "0";
-            loginForm.style.display = "none";
-
-            regForm.style.display = "block";
-            setTimeout(() => {
-                regForm.style.opacity = "1";
-            }, 10);
-        }
-
-        function showLogin(event) {
-            if (event) event.preventDefault();
-
-            regForm.style.opacity = "0";
-            regForm.style.display = "none";
-
-            loginForm.style.display = "block";
-            setTimeout(() => {
-                loginForm.style.opacity = "1";
-            }, 10);
-        }
-    </script> -->
-
-    <!-- <script>
-        const loginForm = document.getElementById("LoginForm");
-        const regForm = document.getElementById("RegForm");
-        // const indicator = document.getElementById("Indicator");
-
-        function showRegister(event) {
-            loginForm.style.transform = "translateY(-100%)";
-            regForm.style.transform = "translateY(0)"
-            loginForm.style.display = "none";
-            regForm.style.display = "block";
-            
-        
-            indicator.style.transform = "translateX(100%)";
-
-            event.preventDefault();
-        }
-
-        function showLogin(event) {
-            loginForm.style.transform = "translateY(0)";
-            regForm.style.transform = "translateY(-100%)"
-            loginForm.style.display = "block";
-            regForm.style.display = "none";
-            indicator.style.transform = "translateX(0)";
-        }
-
-    </script> -->
 
 </body>
 
 </html>
-
-
-

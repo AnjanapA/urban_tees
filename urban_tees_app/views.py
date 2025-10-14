@@ -4,8 +4,11 @@ from django.template import loader
 from django.conf import settings
 from .models import Product,User
 import os
-from .forms import LoginForm,RegisterForm,UserInfoForm
+from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm
 from django.contrib import messages
+from django.core.mail import send_mail
+import random
+
 
 # Create your views here.
 # def login(request):
@@ -201,32 +204,139 @@ def account(request):
 def logout(request):
     return redirect('web_home')
 
+
+def send_otp(request,email,username):
+    otp=random.randint(100000,999999)
+    request.session['otp'] = otp
+    request.session['username'] = username
+    request.session['email'] = email
+    send_mail(
+        subject='OTP Code',
+        message=f'Your OTP is: {otp}',
+        from_email='anjanaprarath@gmail.com',
+        recipient_list=[email],
+    )
+
+
+                
 def register(request):
     if request.method == 'POST':
-            reg_form=RegisterForm(request.POST)
-            print("register")
-
+        reg_form=SendOTPForm(request.POST)
+        if request.POST.get('send_otp')=="send_otp":
             if reg_form.is_valid():
-                password =reg_form.cleaned_data['password']
-                confirm =reg_form.cleaned_data['confirm_password']
-                if password == confirm:
-                    myuser = User.objects.create(
-                        phone=reg_form.cleaned_data['phone'],
-                        username=reg_form.cleaned_data['username'],
-                        email=reg_form.cleaned_data['email'],
-                        password=password
-                    )
-                    messages.success(request, "Account created successfully!")
-                    return redirect('login')
-                
-                else:
-                    messages.error(request, "Passwords do not match")
-                    return render(request,'account.html',{'form':reg_form,'value':'register'})
+                username=reg_form.cleaned_data['username']
+                email=reg_form.cleaned_data['email']
+                send_otp(request,email,username)      
+                return redirect('verify_otp')
+        
+        else:
+            # reg_form.save()
             return render(request,'account.html',{'form':reg_form,'value':'register'})
+            
     else:
         
-        reg_form1=RegisterForm()
+        reg_form1=SendOTPForm()
         return render(request,'account.html',{'form1':reg_form1,'value':'register'})
+
+
+def verify_otp(request):
+    if request.method == 'POST':
+        otp_form=VerifyOTPForm(request.POST)
+        if request.POST.get('verify_otp')=="verify":
+            if otp_form.is_valid():
+                entered_otp = otp_form.cleaned_data['otp']
+                session_otp = str(request.session.get('otp'))
+                
+                if entered_otp == session_otp:
+                    username = request.session.get('username')
+                    email = request.session.get('email')
+
+                    User.objects.create(username=username, email=email)
+                # otp=request.session.get('otp')
+                # username=request.session.get('username')
+                # email=request.session.get('email')
+                    messages.success(request,'Email varified successfully.')
+                    return redirect('final_register')
+        else:
+            messages.error(request,'Could not verify email')
+
+            return render(request,'verify_otp.html',{'form':otp_form,'value':'verify'})
+    else:
+        
+        otp_form=VerifyOTPForm()
+        return render(request,'verify_otp.html',{'form':otp_form,'value':'verify'})
+    
+
+
+def final_register(request):
+    if request.method == 'POST':
+        final_form=RegisterForm(request.POST)
+
+
+        if final_form.is_valid():
+            username=request.session.get('username')
+            email=request.session.get('email')
+
+            print(username,email)
+            phone =final_form.cleaned_data['phone']
+            # address =final_form.cleaned_data['address']
+            # place =final_form.cleaned_data['place']
+            # city =final_form.cleaned_data['city']
+            # pincode =final_form.cleaned_data['pincode']
+            role =final_form.cleaned_data['role']
+            # activity =final_form.cleaned_data['activity']
+
+            password =final_form.cleaned_data['password']
+            confirm =final_form.cleaned_data['confirm_password']
+            if password == confirm:
+                myuser = User(
+                    username=username,
+                    email=email,
+                    phone=final_form.cleaned_data['phone'],
+                    # username=final_form.cleaned_data['username'],
+                    # email=final_form.cleaned_data['email'],
+                    address='',
+                    place='',
+                    city='',
+                    pincode='',
+                    role="user",
+                    activity='',
+                    password=password,
+                    confirm_password=confirm
+                )
+                form = RegisterForm(initial={
+                    'username': username, 
+                    'email': email,
+                    'phone': phone,
+
+                    'address': '',
+                    'place': '',
+                    'city': '',
+                    'pincode': '',
+                    'role':role,
+                    'activity': '',
+
+                    # 'address':address,
+                    # 'place':place,
+                    # 'city':city,
+                    # 'pincode':pincode,
+                    # 'role':role,
+                    # 'activity':activity,
+                    'password':password,
+                    'confirm_password':confirm
+                    })
+                
+                myuser.save()
+                messages.success(request, "Account created successfully!")
+                return redirect('login')
+        else:
+            messages.error(request,'There is an error creating account')
+
+            return render(request,'final_register.html',{'form':final_form,'value':'register'})
+    else:
+        
+        final_form=RegisterForm()
+        return render(request,'final_register.html',{'form':final_form,'value':'register'})
 
 
 def login(request):
@@ -253,6 +363,7 @@ def login(request):
     else:
         form=LoginForm()
         return render(request,'account.html',{'form':form,'value':'login'})
+
 
 
 def userinfo(request):

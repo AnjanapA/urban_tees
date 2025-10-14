@@ -130,14 +130,14 @@
   </footer>
 
 <script>
-    const userIsLoggedIn = false; // Simulate login state; replace with real check
+    const userIsLoggedIn = false; 
 
     if (!userIsLoggedIn) {
         document.addEventListener('click', function(e) {
             e.preventDefault();
             alert("You have to login");
-            window.location.href = '/login'; // 🔁 Redirect to login page
-        }, { once: true }); // Only trigger once, on the first click
+            window.location.href = '/login';  
+        }, { once: true }); 
     }
 </script>
 </body>

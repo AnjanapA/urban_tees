@@ -21,11 +21,14 @@ path('admin_delete_product/<int:id>',views.admin_delete_product,name='admin_dele
 # user
 path('web_home',views.web_home,name='web_home'),
 path('account',views.account,name='account'),
-path('login',views.login,name='login'),
-path('register',views.register,name='register'),
 path('home',views.home,name='home'),
 path('logout',views.logout,name='logout'),
 path('userinfo',views.userinfo,name='userinfo'),
+path('login',views.login,name='login'),
+path('register',views.register,name='register'),
+path('send_otp/<str:email>/', views.send_otp, name='send_otp'),
+path('verify_otp', views.verify_otp, name='verify_otp'),
+path('final_register', views.final_register, name='final_register'),
 
 path('cart_slide/<int:id>/',views.cart_slide,name='cart_slide'),
 
