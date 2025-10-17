@@ -27,7 +27,8 @@
 
           <a class="btn btn-outline-success" href="{% url 'user_order_review' pro.id  %}">buy now</a>
 
-          <a class="btn btn-outline-danger" href="{% url 'cart_slide' pro.id  %}" id="cartSlide">
+          <a class="btn action-btn btn-outline-danger" data-action="cartSlide" id="cartSlide" data-id="1">
+            <!-- href="{% url 'cart_slide' pro.id  %}" -->
             add to cart</a>
         </ul>
       </div>
@@ -70,7 +71,6 @@
 
     <h5 class="mb-3">select size and quantity</h5>
     <div id="button-container">
-      <!-- Initial button -->
       <button id="toggleButton"
         style="padding: 8px 16px; background-color: white; color: black; border: 1px solid #ccc;"
         onclick="showCounter()">
@@ -106,8 +106,9 @@
     <div class="dropdown-divider"></div>
     <!-- <a class="dropdown-item"  href="{% url 'web_home' %}">Logout</a> -->
   </div>
-
+  {% endblock %}
   <!-- cart sidebar -->
+  {% block script %}
   <script>
     const cartSidebar = document.getElementById('cartSidebar');
     const cartOpenBtn = document.getElementById('cartSlide');
@@ -148,9 +149,30 @@
     function decrease() {
       if (count > minCount) {
         count--;
+
         document.getElementById('counterValue').innerText = count;
       }
     }
-  </script>
 
+
+    $('.action-btn').on('click', function () {
+      const action = $(this).data('cart_slide');
+      const id = $(this).data('id');
+
+      $.ajax({
+        url: '/user_products/cart_slide',
+        method: 'POST',
+        data: {
+          action: cart_slide,
+          product_id: id
+        },
+        success: function (response) {
+          alert(response.message);
+        },
+        error: function () {
+          alert("Something went wrong.");
+        }
+      });
+    });
+  </script>
   {% endblock %}

@@ -8,11 +8,17 @@ from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm
 from django.contrib import messages
 from django.core.mail import send_mail
 import random
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login,logout,authenticate
+from django.conf.urls import handler404
 
 
-# Create your views here.
-# def login(request):
-#     return render(request,'login.html')
+
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+handler404 = 'urban_tees.urls.custom_404_view'
 
 def main(request):
     return render(request,'main.html')
@@ -120,9 +126,27 @@ def admin_add_product(request):
 
     return render(request,'admin_add_product.html',{'upload':upload})
 
+@login_required(login_url='/login/')
+
 def admin_view_product(request):
-    item_details=Product.objects.all()
-    return render(request,'admin_view_product.html',{'item':item_details})
+    # item_details=Product.objects.all()
+    # return render(request,'admin_view_product.html',{'item':item_details})
+    # , category=None
+    # categories = ['mens', 'womens', 'girls', 'boys']
+    # if category in categories:
+    #     item_details = Product.objects.filter(category=category)
+    # else:
+    item_details = Product.objects.all()
+
+    paginator = Paginator(item_details,4) 
+    
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'admin_view_product.html', {'item':item_details,'page_obj': page_obj})
+    # return render(request, 'user_products.html', {
+    #     'item':item_details,
+    #     'category': category,
+    # })
 
 def category_product(request, category=None):
     categories = ['mens', 'womens', 'girls', 'boys']
@@ -230,7 +254,6 @@ def register(request):
                 return redirect('verify_otp')
         
         else:
-            # reg_form.save()
             return render(request,'account.html',{'form':reg_form,'value':'register'})
             
     else:
@@ -248,10 +271,10 @@ def verify_otp(request):
                 session_otp = str(request.session.get('otp'))
                 
                 if entered_otp == session_otp:
-                    username = request.session.get('username')
-                    email = request.session.get('email')
+                    # username = request.session.get('username')
+                    # email = request.session.get('email')
 
-                    User.objects.create(username=username, email=email)
+                    
                 # otp=request.session.get('otp')
                 # username=request.session.get('username')
                 # email=request.session.get('email')
@@ -289,7 +312,7 @@ def final_register(request):
             password =final_form.cleaned_data['password']
             confirm =final_form.cleaned_data['confirm_password']
             if password == confirm:
-                myuser = User(
+                myuser = User.objects.create(
                     username=username,
                     email=email,
                     phone=final_form.cleaned_data['phone'],
@@ -304,29 +327,7 @@ def final_register(request):
                     password=password,
                     confirm_password=confirm
                 )
-                form = RegisterForm(initial={
-                    'username': username, 
-                    'email': email,
-                    'phone': phone,
-
-                    'address': '',
-                    'place': '',
-                    'city': '',
-                    'pincode': '',
-                    'role':role,
-                    'activity': '',
-
-                    # 'address':address,
-                    # 'place':place,
-                    # 'city':city,
-                    # 'pincode':pincode,
-                    # 'role':role,
-                    # 'activity':activity,
-                    'password':password,
-                    'confirm_password':confirm
-                    })
-                
-                myuser.save()
+                # myuser.save()
                 messages.success(request, "Account created successfully!")
                 return redirect('login')
         else:
@@ -335,11 +336,29 @@ def final_register(request):
             return render(request,'final_register.html',{'form':final_form,'value':'register'})
     else:
         
-        final_form=RegisterForm()
+        # final_form=RegisterForm()
+        username=request.session.get('username')
+        email=request.session.get('email')
+        final_form = RegisterForm(initial={
+            'username': username, 
+            'email': email,
+            })
+        
         return render(request,'final_register.html',{'form':final_form,'value':'register'})
+    
+def is_user(request):
+    if request.user.role=="user":
+        return True
+    return False
+
+def is_admin(request):
+    if request.user.role=="admin":
+        return True
+    return False
 
 
-def login(request):
+
+def login_acc(request):
     if request.method == 'POST':
         if request.POST.get('loginvalid')=="login":
             return redirect('home')
@@ -354,6 +373,7 @@ def login(request):
                     password = form.cleaned_data['password']
                     if myuser.password==password:
                         request.session['user_id']=myuser.id
+                        # login(request)
                         return redirect('home')
                     else:
                         messages.error(request,'Invalid username or password.')
@@ -364,6 +384,9 @@ def login(request):
         form=LoginForm()
         return render(request,'account.html',{'form':form,'value':'login'})
 
+def logout_acc(request):
+    logout(request)
+    return redirect('login')
 
 
 def userinfo(request):
@@ -378,22 +401,37 @@ def userinfo(request):
     return render(request, 'userinfo.html', {'form': form})
 
 
+
 def user_products(request, category=None):
     categories = ['mens', 'womens', 'girls', 'boys']
     if category in categories:
         item_details = Product.objects.filter(category=category)
     else:
         item_details = Product.objects.all()
-    
     return render(request, 'user_products.html', {
-        'item':item_details,
-        'category': category,
+        'item': item_details,
     })
+
+# def user_products(request, category=None):
+#     categories = ['mens', 'womens', 'girls', 'boys']
+#     if category in categories:
+#         item_details = Product.objects.filter(category=category)
+#     else:
+#         item_details = Product.objects.all()
+#         return render(request, 'user_products.html', {'item':item_details})
+#     return render(request, 'user_products.html', {
+#         'item':item_details,
+#         'category': category,
+#     })
+
+@login_required(login_url='/login/')
 def user_single_product(request, id):
-    item_details=Product.objects.get(id=id)
-    return render(request, 'user_single_product.html', {'item':item_details})
+    if is_user(request)==True:
 
+        item_details=Product.objects.get(id=id)
+        return render(request, 'user_single_product.html', {'item':item_details})
 
+@login_required(login_url='/login/')
 def user_order_review(request, id):
     item_details=Product.objects.get(id=id)
     return render(request, 'user_order_review.html', {'item':item_details})

@@ -134,3 +134,8 @@ EMAIL_HOST_PASSWORD = 'qlpw mvzo uljx emcw'
 # SESSION_COOKIE_AGE = 300
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+LOGIN_URL = '/login/'
+
+
+DEBUG = False
+ALLOWED_HOSTS = ['*'] 

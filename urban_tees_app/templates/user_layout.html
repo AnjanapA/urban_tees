@@ -110,21 +110,22 @@
     </div>
   </div>
 
-  <!-- JS to toggle sidebar -->
+  {% block script %}
   <script>
-    const userSidebar = document.getElementById('userSidebar');
-    const userOpenBtn = document.getElementById('userIconBtn');
-    const userCloseBtn = document.getElementById('userCloseSidebar');
-
-    userOpenBtn.onclick = () => userSidebar.style.right = '0';
-    userCloseBtn.onclick = () => userSidebar.style.right = '-320px';
-
-    document.addEventListener('click', function (e) {
-      if (!userSidebar.contains(e.target) && !userOpenBtn.contains(e.target)) {
-        userSidebar.style.right = '-320px';
-      }
-    });
-  </script>
+      const userSidebar = document.getElementById('userSidebar');
+      const userOpenBtn = document.getElementById('userIconBtn');
+      const userCloseBtn = document.getElementById('userCloseSidebar');
+      
+      userOpenBtn.onclick = () => userSidebar.style.right = '0';
+      userCloseBtn.onclick = () => userSidebar.style.right = '-320px';
+      
+      document.addEventListener('click', function (e) {
+        if (!userSidebar.contains(e.target) && !userOpenBtn.contains(e.target)) {
+          userSidebar.style.right = '-320px';
+        }
+      });
+      </script>
+      {% endblock %}
 
 </body>
 

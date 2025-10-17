@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser,BaseUserManager
 import json
 
 class Product(models.Model):
@@ -47,7 +48,7 @@ class User(models.Model):
     ('admin', 'Admin'),
         ]
     username=models.CharField(max_length=255)
-    email=models.EmailField("Email", max_length=254)
+    email=models.EmailField("Email", max_length=254,unique=True)
     phone=models.CharField("Phone", max_length=255)
     address=models.CharField(max_length=255)
     place=models.CharField(max_length=255)
@@ -58,7 +59,51 @@ class User(models.Model):
     password=models.CharField(max_length=8)
     confirm_password=models.CharField(max_length=8,null=True,blank=True)
 
+
+    REQUIRED_FIELDS=['email']
+
+    
     def __str__(self):
         return self.email
 
+class Order(models.Model):
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=100)
 
+    SIZE_CHOICES = [
+        ('small', 'Small'),
+        ('medium', 'Medium'),
+        ('large', 'Large'),
+        ('extra_large', 'Extra Large'),
+    ]
+    size = models.CharField(max_length=20, choices=SIZE_CHOICES)
+
+    order_no = models.IntegerField()
+    order_id = models.CharField(max_length=50)
+    total_amount = models.IntegerField()
+    total_discount = models.IntegerField()
+
+    PAYMENT_METHOD_CHOICES = [
+        ('cash_on_delivery', 'Cash on Delivery'),
+        ('online_payment', 'Online Payment'),
+        ('card_payment', 'Card Payment'),
+    ]
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
+
+    PAYMENT_STATUS_CHOICES = [
+        ('paid', 'Paid'),
+        ('unpaid', 'Unpaid'),
+    ]
+    payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES)
+
+    ORDER_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled'),
+    ]
+    order_status = models.CharField(max_length=15, choices=ORDER_STATUS_CHOICES)
+
+    def __str__(self):
+        return f"Order {self.order_no} - {self.product_name}"

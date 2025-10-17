@@ -19,19 +19,20 @@ path('admin_delete_product/<int:id>',views.admin_delete_product,name='admin_dele
 
 
 # user
+path('custom_404_view',views.custom_404_view,name='custom_404_view'),
 path('web_home',views.web_home,name='web_home'),
 path('account',views.account,name='account'),
 path('home',views.home,name='home'),
 path('logout',views.logout,name='logout'),
 path('userinfo',views.userinfo,name='userinfo'),
-path('login',views.login,name='login'),
+path('login',views.login_acc,name='login'),
 path('register',views.register,name='register'),
 path('send_otp/<str:email>/', views.send_otp, name='send_otp'),
 path('verify_otp', views.verify_otp, name='verify_otp'),
 path('final_register', views.final_register, name='final_register'),
 
 path('cart_slide/<int:id>/',views.cart_slide,name='cart_slide'),
-
+path('logout',views.logout_acc,name='logout'),
 
 path('user_layout',views.user_layout,name='user_layout'),
 path('user_products', views.user_products, name='user_products'),

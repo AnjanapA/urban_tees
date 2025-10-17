@@ -2,53 +2,165 @@
 {% load static %}
 {% block content %}
 
-<div class="grid text-center container-fluid" style="--bs-columns: 3;">
-
-    <div class="container mt-4">
-        <div class="row g-3">
-            {% for pro in item %}
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
-
-                <div class="card w-100 position-relative">
-                    <button class="btn position-absolute top-0 end-0 m-2 p-0 bookmark-btn"
-                        style="background: none; border: none;">
-                        <i class="bi bi-bookmark-heart-fill fs-4 text-secondary"></i>
-                    </button>
-                    <a href="{% url 'user_single_product' pro.id %}">
-
-                        <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
-                            style="height: auto; max-height: 200px; object-fit: contain;">
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ pro.item_name }}</h5>
-                        <h5 class="card-text ">{{ pro.item_description }}</h5>
-                    </div>
-                    <div>
-
-                        <p class="card-text btn btn-outline-dark btn-sm disabled">S</p>
-                        <p class="card-text btn btn-outline-dark btn-sm disabled">M</p>
-                        <p class="card-text btn btn-outline-dark btn-sm disabled">L</p>
-                        <p class="card-text btn btn-outline-dark btn-sm disabled">XL</p>
-                    </div>
-                    <ul class="d-flex justify-content-between me-5">
-                        <li class="list-group-item text-danger fs-2"><strong></strong> {{ pro.new_price }}</li>
-                        <li class="list-group-item fs-3"><del>{{ pro.old_price }}</del></li>
-                        <li class="list-group-item text-success fs-2">{{ pro.offer }} %</li>
-                    </ul>
-                    <ul class=" d-flex justify-content-between me-5">
-
-                        <a class="btn btn-outline-success" href="{% url 'wishlist_page'  %}">
-                            <i class="bi bi-heart"></i> </a>
-
-                        <a class="btn btn-outline-danger" href="{% url 'cart_page' %}">
-                            <i class="bi bi-cart-fill"></i>
-                        </a>
-                    </ul>
+<div class="container mt-4">
+    <div class="row g-3" id="product-container">
+        {% for pro in item %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex product-card"
+             data-category="{{ pro.category }}">
+            <div class="card w-100 position-relative">
+                <a href="{% url 'user_single_product' pro.id %}">
+                    <img src="{% static pro.item_image1 %}" class="card-img-top" alt="{{ pro.item_name }}"
+                         style="max-height: 200px; object-fit: contain;">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ pro.item_name }}</h5>
+                    <p class="card-text">{{ pro.item_description }}</p>
                 </div>
+                <div>
+                    <span class="btn btn-outline-dark btn-sm disabled">S</span>
+                    <span class="btn btn-outline-dark btn-sm disabled">M</span>
+                    <span class="btn btn-outline-dark btn-sm disabled">L</span>
+                    <span class="btn btn-outline-dark btn-sm disabled">XL</span>
+                </div>
+                <ul class="d-flex justify-content-between me-5 list-unstyled px-3">
+                    <li class="text-danger fs-5">{{ pro.new_price }}</li>
+                    <li class="fs-6"><del>{{ pro.old_price }}</del></li>
+                    <li class="text-success fs-5">{{ pro.offer }}%</li>
+                </ul>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
 </div>
+
+<div class="grid text-center container-fluid mt-4">
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+
+{% endblock %}
+{% block script %}
+<script>
+
+const products = [
+        {% for pro in item %}
+        {
+            id: "{{ pro.id }}",
+            item_title : "{{ pro.item_name }}",
+            item_description: "{{ pro.item_description }}",
+            item_image: "{% static pro.item_image1 %}",
+            new_price: "{{ pro.new_price }}",
+            old_price: "{{ pro.old_price }}",
+            offer: "{{ pro.offer }}"
+        },
+        {% endfor %}
+    ];
+    const itemsPerPage = 8;
+    let currentPage = 1;
+
+    function renderProducts() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedItems = products.slice(start, end);
+
+        const container = document.getElementById('product-container');
+        container.innerHTML = '';
+
+        paginatedItems.forEach(pro => {
+            container.innerHTML += `
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+                    <div class="card w-100 position-relative">
+                        <button class="btn position-absolute top-0 end-0 m-2 p-0 bookmark-btn" style="background: none; border: none;">
+                            <i class="bi bi-bookmark-heart-fill fs-4 text-secondary"></i>
+                        </button>
+                        <a href="/product/${pro.id}">
+                            <img src="${pro.item_image}" class="card-img-top" alt="product image"
+                                 style="height: auto; max-height: 200px; object-fit: contain;">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">${pro.item_name}</h5>
+                            <h5 class="card-text">${pro.item_description}</h5>
+                        </div>
+                        <div>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">S</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">M</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">L</p>
+                            <p class="card-text btn btn-outline-dark btn-sm disabled">XL</p>
+                        </div>
+                        <ul class="d-flex justify-content-between me-5">
+                            <li class="list-group-item text-danger fs-2">${pro.new_price}</li>
+                            <li class="list-group-item fs-3"><del>${pro.old_price}</del></li>
+                            <li class="list-group-item text-success fs-2">${pro.offer}%</li>
+                        </ul>
+                        <ul class="d-flex justify-content-between me-5">
+                            <a class="btn btn-outline-success" href="{% url 'wishlist_page' %}">
+                                <i class="bi bi-heart"></i>
+                            </a>
+                            <a class="btn btn-outline-danger" href="{% url 'cart_page' %}">
+                                <i class="bi bi-cart-fill"></i>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(products.length / itemsPerPage);
+        const pagination = document.getElementById('pagination');
+        const container = document.getElementById('product-container');
+        pagination.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            pagination.innerHTML += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+                </li>
+            `;
+        }
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        renderProducts();
+        renderPagination();
+    }
+
+    renderProducts();
+    renderPagination();
+</script>
 
 {% endblock %}

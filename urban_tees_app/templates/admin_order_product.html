@@ -1,0 +1,37 @@
+{% extends 'admin_layout.html' %}
+{% block content %}
+
+{% load static %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <img src="{% static item.item_image1 %}" class="d-block w-100" alt="Image 1"
+                        style="height: auto; max-height: 200px; object-fit: contain;">
+                </div>
+                <div class="col-md-5 text-center">
+                    <h2 class="mb-3">{{ item.item_name }}</h2>
+
+                    <p>{{ item.item_description }}</p>
+                    <p>{{ item.item_size }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <h3>Order Summery</h3>
+                <label for="">Total Amount</label>
+                inpu
+            </div>
+        </div>
+        <div class="col-sm-4">
+
+            <div class="card shadow">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+{% endblock %}
