@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.conf import settings
-from .models import Product,User
+from .models import Product,User,Order
 import os
 from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm
 from django.contrib import messages
@@ -10,9 +10,8 @@ from django.core.mail import send_mail
 import random
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login,logout,authenticate
 from django.conf.urls import handler404
-
+from django.contrib.auth import authenticate, login, logout
 
 
 def custom_404_view(request, exception):
@@ -360,29 +359,29 @@ def is_admin(request):
 
 def login_acc(request):
     if request.method == 'POST':
-        if request.POST.get('loginvalid')=="login":
+        form1 = LoginForm(request.POST)
+        # if form1.is_valid():
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        # email = form1.cleaned_data['email']
+        # password = form1.cleaned_data['password']
+        print(email,password)
+        user=User.objects.get(email=email)
+        # user = authenticate()  # if using email as username
+    
+        print(user.password)
+        if user.password == password:
+            # login(request, user)
             return redirect('home')
         else:
-                
-            form=LoginForm(request.POST)
+            messages.error(request, 'Invalid email or password.')
 
-            if form.is_valid():
-                email = form.cleaned_data['email']
-                try:
-                    myuser=User.objects.get(email=email)
-                    password = form.cleaned_data['password']
-                    if myuser.password==password:
-                        request.session['user_id']=myuser.id
-                        # login(request)
-                        return redirect('home')
-                    else:
-                        messages.error(request,'Invalid username or password.')
-                except User.DoesNotExist:
-                    messages.error(request,'user not exist.')
-        return render(request,'account.html',{'form':form,'value':'login'})
+        return render(request, 'account.html', {'form': form1, 'value': 'login'})
+    
     else:
-        form=LoginForm()
-        return render(request,'account.html',{'form':form,'value':'login'})
+        form1 = LoginForm()
+    return render(request, 'account.html', {'form': form1, 'value': 'login'})
+
 
 def logout_acc(request):
     logout(request)
@@ -456,4 +455,7 @@ def wishlist_page(request):
 def cart_page(request):
     return render(request, 'cart_page.html')
 
-
+@login_required
+def user_orders(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'user_myorder_page.html', {'orders': orders})

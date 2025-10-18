@@ -137,5 +137,5 @@ EMAIL_HOST_PASSWORD = 'qlpw mvzo uljx emcw'
 LOGIN_URL = '/login/'
 
 
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*'] 

@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser,BaseUserManager
-import json
+from django.contrib.auth.models import AbstractUser
+
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -57,16 +57,18 @@ class User(models.Model):
     role=models.CharField(max_length=10, choices=ROLES)
     activity=models.CharField(max_length=255)
     password=models.CharField(max_length=8)
-    confirm_password=models.CharField(max_length=8,null=True,blank=True)
+    confirm_password=models.CharField(max_length=8,default="")
 
 
-    REQUIRED_FIELDS=['email']
+    REQUIRED_FIELDS=['email','password']
 
     
     def __str__(self):
-        return self.email
+        return self.username
 
 class Order(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE)  # Add this line
+
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     product_name = models.CharField(max_length=100)
 

@@ -19,24 +19,13 @@
 
         <div class="bg-white p-4 rounded shadow">
             {% if value == 'login' %}
-            <form action="{% url 'login' %}" method="post" enctype="multipart/form-data" id="LoginForm"
+            <form action="{% url 'login_acc' %}" method="post" enctype="multipart/form-data" id="LoginForm"
                 style="display: block; transition: all 0.3s ease;" onload="loginload()">
                 {% csrf_token %}
                 <div class="d-flex justify-content-between position-relative mb-4"
                     style="border-radius: 30px; overflow: hidden; border: 2px solid none; width: 300px; margin: 50px auto;">
 
-                    <!-- <button onclick="showLogin()" type="submit" name="login"
-                        class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        Login
-                        
-                    </button>
-                    <button onclick="showRegister()" type="submit" name="register"
-                        class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        Register
-                    </button> -->
-                    <a href="{% url 'login' %}" onclick="showLogin()" class="btn btn-warning w-50 rounded-0 text-black"
+                    <a href="{% url 'login_acc' %}" onclick="showLogin()" class="btn btn-warning w-50 rounded-0 text-black"
                         style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
                         login
                     </a>
