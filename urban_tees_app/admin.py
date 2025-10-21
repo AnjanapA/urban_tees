@@ -38,6 +38,5 @@ class UserAdmin(admin.ModelAdmin):
     'role',
     'activity',
     'password',
-    'confirm_password'
     )
 admin.site.register(User,UserAdmin)

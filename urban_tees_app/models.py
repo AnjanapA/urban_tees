@@ -42,12 +42,12 @@ class Product(models.Model):
 #     models.EmailField(_(""), max_length=254)
 
 
-class User(models.Model):
+class User(AbstractUser):
     ROLES = [
     ('user', 'User'),
     ('admin', 'Admin'),
         ]
-    username=models.CharField(max_length=255)
+    user_name = models.CharField(max_length=150, unique=True,null=True)
     email=models.EmailField("Email", max_length=254,unique=True)
     phone=models.CharField("Phone", max_length=255)
     address=models.CharField(max_length=255)
@@ -57,17 +57,17 @@ class User(models.Model):
     role=models.CharField(max_length=10, choices=ROLES)
     activity=models.CharField(max_length=255)
     password=models.CharField(max_length=8)
-    confirm_password=models.CharField(max_length=8,default="")
 
+    USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS=['email','password']
+    REQUIRED_FIELDS=['password']
 
     
     def __str__(self):
         return self.username
 
 class Order(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE)  # Add this line
+    user = models.ForeignKey('User', on_delete=models.CASCADE) 
 
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     product_name = models.CharField(max_length=100)
@@ -109,3 +109,11 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.order_no} - {self.product_name}"
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} -> {self.product.item_name}"

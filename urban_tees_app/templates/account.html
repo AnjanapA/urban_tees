@@ -86,7 +86,7 @@
                         Register
                     </button> -->
 
-                    <a href="{% url 'login' %}" onclick="showLogin(event)"
+                    <a href="{% url 'login_acc' %}" onclick="showLogin(event)"
                         class="btn btn-warning w-50 rounded-0 text-black"
                         style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
                         login
@@ -101,7 +101,7 @@
                 </div>
 
                 <div class=" row d-flex justify-content-between position-relative mb-4">
-                    {{ form1.username }}
+                    {{ form1.user_name }}
                 </div>
                 <div class=" row d-flex justify-content-between position-relative mb-4">
 

@@ -22,9 +22,9 @@ class LoginForm(forms.ModelForm):
 class SendOTPForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['user_name', 'email']
         widgets = {
-            'username': forms.TextInput(attrs={
+            'user_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter username'
             }),
@@ -52,15 +52,11 @@ class RegisterForm(forms.ModelForm):
         ('admin', 'Admin'),
     ]
 
-        fields = [ 'password','confirm_password' ,'phone','role']
+        fields = [ 'password' ,'phone','role']
         widgets = {
             'password': forms.PasswordInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter password'
-            }),
-            'confirm_password' :forms.PasswordInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Confirm password'
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'form-control',

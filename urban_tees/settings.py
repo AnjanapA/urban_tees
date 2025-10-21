@@ -139,3 +139,5 @@ LOGIN_URL = '/login/'
 
 DEBUG = True
 ALLOWED_HOSTS = ['*'] 
+
+AUTH_USER_MODEL = 'urban_tees_app.User'

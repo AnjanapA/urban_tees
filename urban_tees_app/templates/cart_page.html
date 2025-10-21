@@ -1,11 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>cart</h1>
-</body>
-</html>
+{% extends 'user_layout.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row g-3">
+        {% if cart_items %}
+            {% for cart in cart_items %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+                    <div class="card w-100 position-relative">
+                        <a href="{% url 'user_single_product' cart.product.id %}">
+                            <img src="{{ cart.product.item_image1.url }}" class="card-img-top" alt="{{ cart.product.item_name }}" style="max-height: 200px; object-fit: contain;">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ cart.product.item_name }}</h5>
+                            <p class="card-text">{{ cart.product.item_description}}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="text-danger fw-bold">{{ cart.product.new_price }}</span>
+                                <span><del>{{ cart.product.old_price }}</del></span>
+                                <span class="text-success">{{ cart.product.offer }}% OFF</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+                            <a href="" class="btn btn-outline-danger">Remove from Cart</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">You haven't added any products to your cart yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

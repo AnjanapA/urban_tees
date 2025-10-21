@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.conf import settings
-from .models import Product,User,Order
+from .models import Product,User,Order,Wishlist
 import os
 from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm
 from django.contrib import messages
@@ -247,7 +247,7 @@ def register(request):
         reg_form=SendOTPForm(request.POST)
         if request.POST.get('send_otp')=="send_otp":
             if reg_form.is_valid():
-                username=reg_form.cleaned_data['username']
+                username=reg_form.cleaned_data['user_name']
                 email=reg_form.cleaned_data['email']
                 send_otp(request,email,username)      
                 return redirect('verify_otp')
@@ -309,10 +309,12 @@ def final_register(request):
             # activity =final_form.cleaned_data['activity']
 
             password =final_form.cleaned_data['password']
-            confirm =final_form.cleaned_data['confirm_password']
+            confirm =request.POST.get('confirm_password')
+            print(password)
+            print(confirm)
             if password == confirm:
                 myuser = User.objects.create(
-                    username=username,
+                    username=email,
                     email=email,
                     phone=final_form.cleaned_data['phone'],
                     # username=final_form.cleaned_data['username'],
@@ -324,11 +326,15 @@ def final_register(request):
                     role="user",
                     activity='',
                     password=password,
-                    confirm_password=confirm
+                    user_name=username
+                    # confirm_password=confirm
                 )
                 # myuser.save()
                 messages.success(request, "Account created successfully!")
-                return redirect('login')
+                return redirect('login_acc')
+            messages.success(request, "Passwords do not match!")
+
+            
         else:
             messages.error(request,'There is an error creating account')
 
@@ -367,11 +373,11 @@ def login_acc(request):
         # password = form1.cleaned_data['password']
         print(email,password)
         user=User.objects.get(email=email)
-        # user = authenticate()  # if using email as username
-    
+        myuser = authenticate(request,email=email,password=password)  
+        print(myuser)
         print(user.password)
         if user.password == password:
-            # login(request, user)
+            login(request, myuser)
             return redirect('home')
         else:
             messages.error(request, 'Invalid email or password.')
@@ -440,20 +446,65 @@ def user_payment(request, id):
     return render(request, 'user_payment.html', {'item':item_details})
 
 def myorder_page(request):
-    return render(request, 'myorder_page.html')
+    return render(request, 'user_myorder_page.html')
 
 def cart_slide(request,id):
     item_details=Product.objects.get(id=id)
     return render(request, 'cart_slide.html', {'item':item_details})
 
 
+# def wishlist_page(request):
+#     wishlist_items = Wishlist.objects.all
+#     return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
+
 def wishlist_page(request):
-    
-    return render(request, 'wish_list.html')
+    if request.method == "POST":
+        product_id = request.POST.get('id')
+        action = request.POST.get('action', 'add') 
+
+        if product_id:
+            wishlist = request.session.get('wishlist',[])
+
+            if action == 'add':
+                if product_id not in wishlist:
+                    wishlist.append(product_id)
+            elif action == 'remove':
+                if product_id in wishlist:
+                    wishlist.remove(product_id)
+
+            request.session['wishlist'] = wishlist
+            return 
+
+        return 
+
+    wishlist_ids = request.session.get('wishlist', [])
+    wishlist_items = Product.objects.filter(id=wishlist_ids)
+    return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
 
 
 def cart_page(request):
-    return render(request, 'cart_page.html')
+    if request.method == "POST":
+        product_id = request.POST.get('id')
+        action = request.POST.get('action', 'add') 
+
+        if product_id:
+            cartlist = request.session.get('cartlist',[])
+
+            if action == 'add':
+                if product_id not in cartlist:
+                    cartlist.append(product_id)
+            elif action == 'remove':
+                if product_id in cartlist:
+                    cartlist.remove(product_id)
+
+            request.session['wishlist'] = cartlist
+            return 
+
+        return 
+
+    cartlist_ids = request.session.get('wishlist', [])
+    cartlist_items = Product.objects.filter(id=cartlist_ids)
+    return render(request, 'cart_page.html', {'cartlist_items': cartlist_items})
 
 @login_required
 def user_orders(request):
