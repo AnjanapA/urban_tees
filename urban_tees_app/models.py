@@ -119,9 +119,18 @@ class Wishlist(models.Model):
         return f"{self.user.username} -> {self.product.item_name}"
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    SIZE=[
+        ('small','Small'),
+        ('medium','Medium'),
+        ('large','Large'),
+        ('extralarge','Extralarge'),
+    ]
+    user_id=models.CharField(max_length=255)
+    product_id=models.CharField(max_length=255)
+    product_name=models.CharField(max_length=255)
+    product_price=models.IntegerField()
+    quantity = models.IntegerField()
+    size = models.CharField(max_length=10, choices=SIZE)
 
-    def __str__(self):
-        return f"{self.user.username} -> {self.product.item_name}"
+
 

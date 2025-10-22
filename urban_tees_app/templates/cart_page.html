@@ -8,19 +8,23 @@
         {% for cart in cart_items %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
             <div class="card w-100 position-relative">
-                <a href="{% url 'user_single_product' cart.id %}">
-                    <img src="{{ cart.item_image1 }}" class="card-img-top" alt="{{ cart.item_name }}"
+
+                <!-- Since product image isn't in model, you can only show it if stored somewhere -->
+                <a href="#">
+                    <img src="{% static 'path/to/default.jpg' %}" class="card-img-top" alt="{{ cart.product_name }}"
                         style="max-height: 200px; object-fit: contain;">
                 </a>
+
                 <div class="card-body">
-                    <h5 class="card-title">{{ cart.item_name }}</h5>
-                    <p class="card-text">{{ cart.item_description }}</p>
+                    <h5 class="card-title">{{ cart.product_name }}</h5>
+                    <p class="card-text">Size: {{ cart.size|title }}</p>
+                    <p class="card-text">Quantity: {{ cart.quantity }}</p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="text-danger fw-bold">{{ cart.new_price }}</span>
-                        <span><del>{{ cart.old_price }}</del></span>
-                        <span class="text-success">{{ cart.offer }}% OFF</span>
+                        <span class="text-danger fw-bold">₹{{ cart.product_price }}</span>
+                        <span class="text-muted">Total: ₹{{ cart.product_price|multiply:cart.quantity }}</span>
                     </div>
                 </div>
+
                 <div class="card-footer bg-transparent border-top-0">
                     <form method="post" action="{% url 'cart_page' %}" class="w-100 text-center">
                         {% csrf_token %}

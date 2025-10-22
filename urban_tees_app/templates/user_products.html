@@ -1,5 +1,6 @@
 {% extends 'user_layout.html' %}
 {% load static %}
+{% load cart_extras %}
 {% block content %}
 
 <div class="container mt-4">
@@ -16,15 +17,46 @@
     </nav>
 </div>
 
-<div id="cart-popup"
+<!-- <div id="cart-popup"
     style="display: none; position: fixed; bottom: 20px; right: 20px; background-color: #333; color: #fff; padding: 12px 20px; border-radius: 6px; font-size: 14px; z-index: 1000;">
     Product added to cart
-</div>
+</div> -->
 
 <div id="wishlist-popup"
     style="display: none; position: fixed; bottom: 20px; right: 20px; background-color: #333; color: #fff; padding: 12px 20px; border-radius: 6px; font-size: 14px; z-index: 1000;">
     Product added to wishlist
 </div>
+
+<!-- Slide-in Cart Panel -->
+<div id="cart-sidebar" style="
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+    padding: 20px;
+    z-index: 9999;
+    transition: right 0.3s ease-in-out;
+    overflow-y: auto;
+">
+    <button onclick="closeSidebar()" style="
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+    ">&times;</button>
+
+    <div id="sidebar-content">
+        <!-- Sidebar will be dynamically populated -->
+    </div>
+</div>
+
 
 {% endblock %}
 
@@ -67,7 +99,7 @@
                             <h5 class="card-title">${pro.item_name}</h5>
                             <p class="card-text">${pro.item_description}</p>
                         </div>
-                        <div>
+                        <div id="size">
                             <span class="btn btn-outline-dark btn-sm disabled">S</span>
                             <span class="btn btn-outline-dark btn-sm disabled">M</span>
                             <span class="btn btn-outline-dark btn-sm disabled">L</span>
@@ -118,7 +150,7 @@
     }
 
     function goToPage(page) {
-        currentPage = page;
+        currentPage = page; 
         renderProducts();
         renderPagination();
     }
@@ -170,66 +202,135 @@
         });
     }
 
-    function showCarttPopup() {
-        const popup = document.getElementById("cart-popup");
+    function sizePopup() {
+        const popup = document.getElementById("size");
         popup.style.display = "block";
         setTimeout(() => {
-            popup.style.display = "none";
+            popup.style.borderColor = "orange";
         }, 3000);
     }
 
-    function attachCartEventHandlers() {
-        const cartButtons = document.querySelectorAll(".cart-btn");
+let selectedSize = null;
 
-        cartButtons.forEach(button => {
-            button.addEventListener("click", function (event) {
-                event.preventDefault();
+function attachCartEventHandlers() {
+    const cartButtons = document.querySelectorAll(".cart-btn");
 
-                const targetButton = event.currentTarget;
-                const productId = targetButton.getAttribute('data-product-id');
+    cartButtons.forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
 
-                fetch(`/cart_page`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "X-CSRFToken": getCSRFToken()
-                    },
-                    body: new URLSearchParams({
-                        id: productId,
-                        action: "add"
-                    }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === "success") {
-                            document.getElementById("cart").value = "view in cart";      
-                            document.getElementById("cart").innerText = "view in cart"; 
-                            } 
-                        else {
-                            alert("Failed to add to cart.");
-                        }
-                    });
+            const card = button.closest('.card');
+            const sizeButtons = card.querySelectorAll('#size span');
+
+            // Enable size buttons
+            sizeButtons.forEach(btn => {
+                btn.classList.remove('disabled');
+                btn.style.border = "2px solid orange";
+                btn.style.color = "orange";
+                btn.style.cursor = "pointer";
+
+                // Add click listener
+                btn.onclick = () => {
+                    selectedSize = btn.textContent;
+                    openSidebar(card, button.getAttribute('data-product-id'), selectedSize);
+                };
             });
+
+            button.textContent = "Select Size";
+            button.style.backgroundColor = "orange";
+            button.style.borderColor = "orange";
+            button.style.color = "white";
         });
-    }
+    });
+}
 
+function openSidebar(card, productId, size) {
+    const sidebar = document.getElementById("cart-sidebar");
+    const content = document.getElementById("sidebar-content");
 
-    function getCSRFToken() {
-        let name = "csrftoken";
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
+    const img = card.querySelector("img").src;
+    const name = card.querySelector(".card-title").textContent;
+    const desc = card.querySelector(".card-text").textContent;
+    const price = card.querySelector(".text-danger").textContent;
+
+    content.innerHTML = `
+        <div style="text-align: center;">
+            <img src="${img}" alt="Product Image" style="width: 100px; height: auto; object-fit: contain; margin-bottom: 10px;">
+        </div>
+        <h5 style="margin-top: 10px;">${name}</h5>
+        <p>${desc}</p>
+        <p><strong>Selected Size:</strong> ${size}</p>
+        <label for="quantity"><strong>Quantity:</strong></label>
+        <select id="quantity" style="display: block; width: 100px; margin-bottom: 10px; padding: 5px;">
+            ${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}</option>`).join("")}
+        </select>
+        <p><strong>Price:</strong> ₹${price}</p>
+        <button onclick="addToCart('${productId}', '${size}', ${price})" id="add-cart-btn" style="
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        ">OK</button>
+    `;
+
+    sidebar.style.right = "0";
+}
+
+function closeSidebar() {
+    document.getElementById("cart-sidebar").style.right = "-400px";
+    selectedSize = null;
+}
+
+function addToCart(productId, size, price) {
+    const quantity = document.getElementById("quantity").value;
+
+    fetch(`/cart_page`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: new URLSearchParams({
+            id: productId,
+            size: size,
+            quantity: quantity,
+            price: price,
+            action: "add"
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            const button = document.getElementById("add-cart-btn");
+            button.textContent = "View in Cart";
+            button.style.backgroundColor = "blue";
+            button.onclick = () => window.location.href = "/cart_page";
+        } else {
+            alert("Failed to add to cart.");
+        }
+    });
+
+    // Optionally close sidebar
+    setTimeout(() => closeSidebar(), 1500);
+}
+
+function getCSRFToken() {
+    let name = "csrftoken";
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
-
+    return cookieValue;
+}
     renderProducts();
     renderPagination();
 </script>

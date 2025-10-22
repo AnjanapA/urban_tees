@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse
 from django.template import loader
 from django.conf import settings
-from .models import Product,User,Order,Wishlist
+from .models import Product,User,Order,Wishlist,Cart
 import os
 from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm
 from django.contrib import messages
@@ -485,32 +485,47 @@ def wishlist_page(request):
     return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
 
 
+
+@login_required
 def cart_page(request):
+    user = request.user
+
     if request.method == "POST":
         product_id = request.POST.get('id')
-        action = request.POST.get('action', 'add')
+        action = request.POST.get('action')
+        size = request.POST.get('size')
+        quantity = request.POST.get('quantity')
+        price = request.POST.get('price')
 
-        if product_id:
-            cartlist = request.session.get('cartlist', [])
+        if not product_id:
+            return JsonResponse({'status': 'error', 'message': 'No product ID'})
 
-            if action == 'add':
-                if product_id not in cartlist:
-                    cartlist.append(product_id)
-            elif action == 'remove':
-                if product_id in cartlist:
-                    cartlist.remove(product_id)
+        if action == 'add':
+            existing = Cart.objects.filter(user_id=user.id, product_id=product_id, size=size).first()
+            if existing:
+                existing.quantity += int(quantity)
+                existing.save()
+            else:
+                product = Product.objects.get(id=product_id)
+                Cart.objects.create(
+                    user_id=user.id,
+                    product_id=product_id,
+                    product_name=product.item_name,
+                    product_price=price,
+                    quantity=quantity,
+                    size=size
+                )
+            return JsonResponse({'status': 'success'})
 
-            request.session['cartlist'] = cartlist
+        elif action == 'remove':
+            Cart.objects.filter(user_id=user.id, product_id=product_id).delete()
+            return JsonResponse({'status': 'success'})
 
-            return JsonResponse({'status': 'success', 'cart_count': len(cartlist)})
+        return JsonResponse({'status': 'error', 'message': 'Invalid action'})
 
-        return JsonResponse({'status': 'error', 'message': 'No product ID'})
-
-    # GET: Render the cart page
-    cartlist_ids = request.session.get('cartlist', [])
-    cartlist_items = Product.objects.filter(id__in=cartlist_ids)
-    return render(request, 'cart_page.html', {'cartlist_items': cartlist_items})
-
+    # GET method — display cart
+    cart_items = Cart.objects.filter(user_id=user.id)
+    return render(request, 'cart_page.html', {'cart_items': cart_items})
 
 @login_required
 def user_orders(request):
