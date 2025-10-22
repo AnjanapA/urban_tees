@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.template import loader
 from django.conf import settings
 from .models import Product,User,Order,Wishlist
@@ -314,7 +314,7 @@ def final_register(request):
             print(confirm)
             if password == confirm:
                 myuser = User.objects.create(
-                    username=email,
+                    # username=email,
                     email=email,
                     phone=final_form.cleaned_data['phone'],
                     # username=final_form.cleaned_data['username'],
@@ -377,7 +377,8 @@ def login_acc(request):
         print(myuser)
         print(user.password)
         if user.password == password:
-            login(request, myuser)
+            login(myuser)
+            # login(request, myuser)
             return redirect('home')
         else:
             messages.error(request, 'Invalid email or password.')
@@ -460,10 +461,10 @@ def cart_slide(request,id):
 def wishlist_page(request):
     if request.method == "POST":
         product_id = request.POST.get('id')
-        action = request.POST.get('action', 'add') 
+        action = request.POST.get('action', 'add')
 
         if product_id:
-            wishlist = request.session.get('wishlist',[])
+            wishlist = request.session.get('wishlist', [])
 
             if action == 'add':
                 if product_id not in wishlist:
@@ -473,22 +474,24 @@ def wishlist_page(request):
                     wishlist.remove(product_id)
 
             request.session['wishlist'] = wishlist
-            return 
 
-        return 
+            return JsonResponse({'status': 'success', 'wishlist_count': len(wishlist)})
 
+        return JsonResponse({'status': 'error', 'message': 'No product ID'})
+
+    # GET request: render wishlist page
     wishlist_ids = request.session.get('wishlist', [])
-    wishlist_items = Product.objects.filter(id=wishlist_ids)
+    wishlist_items = Product.objects.filter(id__in=wishlist_ids)
     return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
 
 
 def cart_page(request):
     if request.method == "POST":
         product_id = request.POST.get('id')
-        action = request.POST.get('action', 'add') 
+        action = request.POST.get('action', 'add')
 
         if product_id:
-            cartlist = request.session.get('cartlist',[])
+            cartlist = request.session.get('cartlist', [])
 
             if action == 'add':
                 if product_id not in cartlist:
@@ -497,14 +500,17 @@ def cart_page(request):
                 if product_id in cartlist:
                     cartlist.remove(product_id)
 
-            request.session['wishlist'] = cartlist
-            return 
+            request.session['cartlist'] = cartlist
 
-        return 
+            return JsonResponse({'status': 'success', 'cart_count': len(cartlist)})
 
-    cartlist_ids = request.session.get('wishlist', [])
-    cartlist_items = Product.objects.filter(id=cartlist_ids)
+        return JsonResponse({'status': 'error', 'message': 'No product ID'})
+
+    # GET: Render the cart page
+    cartlist_ids = request.session.get('cartlist', [])
+    cartlist_items = Product.objects.filter(id__in=cartlist_ids)
     return render(request, 'cart_page.html', {'cartlist_items': cartlist_items})
+
 
 @login_required
 def user_orders(request):
