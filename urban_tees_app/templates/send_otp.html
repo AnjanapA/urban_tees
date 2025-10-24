@@ -31,13 +31,11 @@
     <form method="post" action="{% url 'send_otp' %}">
         {% csrf_token %}
         
-        <!-- Email Field -->
         <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
             <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email">
         </div>
 
-        <!-- Submit Button -->
         <button type="submit" class="btn btn-primary w-100">Send OTP</button>
     </form>
 

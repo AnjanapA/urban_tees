@@ -230,6 +230,7 @@ def logout(request):
 
 def send_otp(request,email,username):
     otp=random.randint(100000,999999)
+    print(otp)
     request.session['otp'] = otp
     request.session['username'] = username
     request.session['email'] = email
@@ -245,18 +246,15 @@ def send_otp(request,email,username):
 def register(request):
     if request.method == 'POST':
         reg_form=SendOTPForm(request.POST)
-        if request.POST.get('send_otp')=="send_otp":
-            if reg_form.is_valid():
-                username=reg_form.cleaned_data['user_name']
-                email=reg_form.cleaned_data['email']
-                send_otp(request,email,username)      
-                return redirect('verify_otp')
-        
+        if reg_form.is_valid():
+            username=reg_form.cleaned_data['user_name']
+            email=reg_form.cleaned_data['email']
+            send_otp(request,email,username)      
+            return redirect('verify_otp')
         else:
             return render(request,'account.html',{'form':reg_form,'value':'register'})
             
     else:
-        
         reg_form1=SendOTPForm()
         return render(request,'account.html',{'form1':reg_form1,'value':'register'})
 
@@ -270,13 +268,6 @@ def verify_otp(request):
                 session_otp = str(request.session.get('otp'))
                 
                 if entered_otp == session_otp:
-                    # username = request.session.get('username')
-                    # email = request.session.get('email')
-
-                    
-                # otp=request.session.get('otp')
-                # username=request.session.get('username')
-                # email=request.session.get('email')
                     messages.success(request,'Email varified successfully.')
                     return redirect('final_register')
         else:
@@ -298,8 +289,6 @@ def final_register(request):
         if final_form.is_valid():
             username=request.session.get('username')
             email=request.session.get('email')
-
-            print(username,email)
             phone =final_form.cleaned_data['phone']
             # address =final_form.cleaned_data['address']
             # place =final_form.cleaned_data['place']
@@ -307,18 +296,15 @@ def final_register(request):
             # pincode =final_form.cleaned_data['pincode']
             role =final_form.cleaned_data['role']
             # activity =final_form.cleaned_data['activity']
-
             password =final_form.cleaned_data['password']
             confirm =request.POST.get('confirm_password')
-            print(password)
-            print(confirm)
+            # print(password)
+            # print(confirm)
             if password == confirm:
-                myuser = User.objects.create(
-                    # username=email,
+                myuser = User.objects.create_user(
+                    username=email,
                     email=email,
                     phone=final_form.cleaned_data['phone'],
-                    # username=final_form.cleaned_data['username'],
-                    # email=final_form.cleaned_data['email'],
                     address='',
                     place='',
                     city='',
@@ -327,14 +313,11 @@ def final_register(request):
                     activity='',
                     password=password,
                     user_name=username
-                    # confirm_password=confirm
                 )
-                # myuser.save()
+                print(myuser)
                 messages.success(request, "Account created successfully!")
                 return redirect('login_acc')
-            messages.success(request, "Passwords do not match!")
-
-            
+            messages.error(request, "Passwords do not match!")
         else:
             messages.error(request,'There is an error creating account')
 
@@ -371,14 +354,12 @@ def login_acc(request):
         password = request.POST.get('password')
         # email = form1.cleaned_data['email']
         # password = form1.cleaned_data['password']
-        print(email,password)
-        user=User.objects.get(email=email)
-        myuser = authenticate(request,email=email,password=password)  
+        # print(email,password)
+        # user=User.objects.get(email=email)
+        myuser = authenticate(username=email,password=password)  
         print(myuser)
-        print(user.password)
-        if user.password == password:
-            login(myuser)
-            # login(request, myuser)
+        if myuser:
+            login(request,myuser)
             return redirect('home')
         else:
             messages.error(request, 'Invalid email or password.')
@@ -479,7 +460,6 @@ def wishlist_page(request):
 
         return JsonResponse({'status': 'error', 'message': 'No product ID'})
 
-    # GET request: render wishlist page
     wishlist_ids = request.session.get('wishlist', [])
     wishlist_items = Product.objects.filter(id__in=wishlist_ids)
     return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
@@ -496,9 +476,10 @@ def cart_page(request):
         size = request.POST.get('size')
         quantity = request.POST.get('quantity')
         price = request.POST.get('price')
+        # total_price=price*quantity
 
         if not product_id:
-            return JsonResponse({'status': 'error', 'message': 'No product ID'})
+            messages.success(request, "no matched items!")
 
         if action == 'add':
             existing = Cart.objects.filter(user_id=user.id, product_id=product_id, size=size).first()
@@ -519,11 +500,11 @@ def cart_page(request):
 
         elif action == 'remove':
             Cart.objects.filter(user_id=user.id, product_id=product_id).delete()
-            return JsonResponse({'status': 'success'})
+            messages.success(request, "Product removed from your cart!")
+            # return JsonResponse({'status': 'success'})
+            # return render(request,'cart_page.html')
 
-        return JsonResponse({'status': 'error', 'message': 'Invalid action'})
-
-    # GET method — display cart
+        # return JsonResponse({'status': 'error', 'message': 'Invalid action'})
     cart_items = Cart.objects.filter(user_id=user.id)
     return render(request, 'cart_page.html', {'cart_items': cart_items})
 

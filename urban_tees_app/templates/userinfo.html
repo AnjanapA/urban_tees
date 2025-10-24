@@ -14,66 +14,145 @@
         rel="stylesheet">
 </head>
 
-<body style="background-color: #051b32; font-family: 'Poppins', sans-serif;">
+<body style="
+  font-family: 'Poppins', sans-serif;
+  background-image: url('{% static 'images/user_info.png' %}');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+">
 
-    <div class="container mt-5 " >
-        <div class="row justify-content-center" >
-            <div class="col-md-6">
-                <form action="{% url 'userinfo' %}" method="post" enctype="multipart/form-data" id="LoginForm"
-                    class="border p-4 shadow rounded" style="background-color: #ffffff45;">
-                    {% csrf_token %}
-
-                    <h4 class="mb-4 text-center">User Info</h4>
-
-                    <div class="mb-3">
-                        <label for="id_name" class="form-label">Name</label>
-                        <input type="text" name="name" maxlength="100" class="form-control" id="id_name" required>
+    <div class="row" style="height: 100%; width: 100%;">
+        <!-- Sidebar -->
+        <div class="col-2" style="background-color: rgba(0, 0, 0, 0.356); color: white; padding: 15px; height: 100%;">
+            <ul class="nav flex-column" style="color: white;">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <img src="{% static 'images/logo1.png' %}" alt="Logo" style="width: 50px; margin-right: 10px;">
+                        <span class="navbar-brand mb-0 h1"
+                            style="font-weight: bold; font-size: 1.5rem;">UrbanTees</span>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="id_gender" class="form-label">Gender</label>
-                        <select name="gender" class="form-select" id="id_gender" required>
-                            <option value="">Select gender</option>
-                            <option value="M">Male</option>
-                            <option value="F">Female</option>
-                            <option value="O">Other</option>
-                        </select>
+                </div>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'myorder_page' %}" style="color: white;">Order History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'userinfo' %}" style="color: white;">Profile Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'wishlist_page' %}" style="color: white;">Saved items</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cart_page' %}" style="color: white;">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'web_home' %}" style="color: white;">Logout</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-10">
+            <div class="container mt-3 ">
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <form action="{% url 'userinfo' %}" method="post" enctype="multipart/form-data" id="LoginForm"
+                            style="background-color: rgba(174, 6, 6, 0.47); color: white; ">
+                            {% csrf_token %}
+
+                            <h4 class="mb-4 text-center" style="color: white;">User Info</h4>
+
+                            <div class="mb-3 row">
+                                <label for="id_name" class="col-sm-3 col-form-label" style="color: white;">Name</label>
+                                <div class="col-sm-9">
+
+                                    <input type="text" name="name" maxlength="100" class="form-control"
+                                        value="{{ user.user_name }}" id="id_name" required
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="id_gender" class="col-sm-3 col-form-label"
+                                    style="color: white;">Gender</label>
+                                <div class="col-sm-9">
+
+                                    <select name="gender" class="form-select" id="id_gender" required
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
+                                        <option value="" style="color:black;">Select gender</option>
+                                        <option value="M" style="color:black;">Male</option>
+                                        <option value="F" style="color:black;">Female</option>
+                                        <option value="O" style="color:black;">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="id_address" class="col-sm-3 col-form-label"
+                                    style="color: white;">Address</label>
+                                <div class="col-sm-9">
+
+                                    <textarea name="address" class="form-control" id="id_address" rows="3" required
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="id_place" class="col-sm-3 col-form-label"
+                                    style="color: white;">Place</label>
+                                <div class="col-sm-9">
+
+                                    <input type="text" name="place" maxlength="100" class="form-control" id="id_place"
+                                        required
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="id_city" class="col-sm-3 col-form-label" style="color: white;">City</label>
+                                <div class="col-sm-9">
+
+                                    <input type="text" name="city" maxlength="100" class="form-control" id="id_city"
+                                        required
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="id_pincode" class="col-sm-3 col-form-label"
+                                    style="color: white;">Pincode</label>
+                                <div class="col-sm-9">
+
+                                    <input type="text" name="pincode" maxlength="6" class="form-control" id="id_pincode"
+                                        required
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="id_phone" class="col-sm-3 col-form-label"
+                                    style="color: white;">Phone</label>
+                                <div class="col-sm-9">
+
+                                    <input type="text" name="phone" maxlength="15" class="form-control" id="id_phone"
+                                        required value="{{ user.phone }}"
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
+                                </div>
+                            </div>
+
+                            <button type="submit" name="done" class="btn w-100"
+                                style="background-color: #050001; color: rgb(255, 0, 0); border: none; padding: 10px 0; font-weight: 500;">
+                                Save
+                            </button>
+                        </form>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="id_address" class="form-label">Address</label>
-                        <textarea name="address" class="form-control" id="id_address" rows="3" required></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_place" class="form-label">Place</label>
-                        <input type="text" name="place" maxlength="100" class="form-control" id="id_place" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_city" class="form-label">City</label>
-                        <input type="text" name="city" maxlength="100" class="form-control" id="id_city" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_pincode" class="form-label">Pincode</label>
-                        <input type="text" name="pincode" maxlength="6" class="form-control" id="id_pincode" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_phone" class="form-label">Phone</label>
-                        <input type="text" name="phone" maxlength="15" class="form-control" id="id_phone" required>
-                    </div>
-
-                    <!-- <div class="mb-3">
-                        <label for="id_photo" class="form-label">Upload Photo</label>
-                        <input type="file" name="photo" class="form-control" id="id_photo">
-                    </div> -->
-
-                    <button type="submit" name="done" class="btn btn-primary w-100">
-                        Done
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>

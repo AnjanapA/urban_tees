@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,32 +15,45 @@
         rel="stylesheet">
 </head>
 
-<body style="font-family: 'Poppins', sans-serif; background-color: #f8f9fa;">
+<body style="
+  font-family: 'Poppins', sans-serif;
+  background-image: url('{% static 'images/reg_bg.jpg' %}');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
 
     <form method="post" action="{% url 'final_register' %}">
         {% csrf_token %}
-        
 
-<div class="container mt-5" style="max-width: 600px;">
-    <h2 class="text-center mb-4">Register - Step 3: Final Details</h2>
+        <div class="container mt-5" style="max-width: 500px; ">
+
+            <div class="p-4 rounded shadow"
+                style="max-width: 800px; margin-top: 400px; background-color: rgba(0, 0, 0, 0.481); border: 2px solid red;">
+                <!-- <h2 class="text-center mb-4">Register - Step 3: Final Details</h2> -->
                 <div class=" row d-flex justify-content-between position-relative mb-4">
                     {{ username }}
                 </div>
                 <div class=" row d-flex justify-content-between position-relative mb-4">
 
-                    {{ email }}
+                    {{ form.email }}
                 </div>
                 <div class=" row d-flex justify-content-between position-relative mb-4">
-                    
-                    
+
+
                     {{ form.phone }}
                 </div>
-                <div class=" row d-flex justify-content-between position-relative mb-4" style="display: block;">
+                <div class=" row d-flex justify-content-between position-relative mb-4"
+                    >
 
 
-                    <select name="role">
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
+                    <select name="role" style="background-color:black; color:white; border:2px solid red; border-radius:6px; padding:10px; width:100%;">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
                     </select>
                 </div>
                 <div class=" row d-flex justify-content-between position-relative mb-4">
@@ -47,18 +62,24 @@
                 </div>
                 <div class=" row d-flex justify-content-between position-relative mb-4">
 
-                    <input type="text" placeholder="confirm password" name="confirm_password" value="{{confirm_password}}">
+                    <input type="password" placeholder="confirm password" name="confirm_password"
+                        value="{{confirm_password}}"
+                        style="background-color:black; color:white; border:2px solid red; border-radius:6px; padding:10px; width:100%;">
                 </div>
 
-                <button type="submit" name="final_register" class="btn btn-primary w-100" value="register"
-                    style="display: block;">
+                <button type="submit" name="final_register" class="btn w-100"
+                    style="background-color: #e63946; color: rgb(0, 0, 0); border: none; padding: 10px 0; font-weight: 500;"
+                    value="register" style="display: block;">
                     Register</button>
-            
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success mt-3">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-            
-</div></body>
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success mt-3">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+
+            </div>
+        </div>
+</body>
+
 </html>

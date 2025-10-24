@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser,BaseUserManager
 
 
 class Product(models.Model):
@@ -41,13 +41,27 @@ class Product(models.Model):
 #     models.PhoneNumberField(_(""))
 #     models.EmailField(_(""), max_length=254)
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self,email,password=None,**extra_fields):
+        if not email:
+            raise ValueError('The email field must be set')
+        email=self.normalize_email(email)
+        user=self.model(email=email,**extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+    
+    # def create_superuser(self,email,password=None,**extra_fields):
+    #     extra_fields.setdefault('is_superuser',True)
+    #     return set.create_user(email,password,**extra_fields)
+
 
 class User(AbstractUser):
     ROLES = [
     ('user', 'User'),
     ('admin', 'Admin'),
         ]
-    user_name = models.CharField(max_length=150, unique=True,null=True)
+    user_name = models.CharField(max_length=150, unique=True)
     email=models.EmailField("Email", max_length=254,unique=True)
     phone=models.CharField("Phone", max_length=255)
     address=models.CharField(max_length=255)
@@ -57,14 +71,16 @@ class User(AbstractUser):
     role=models.CharField(max_length=10, choices=ROLES)
     activity=models.CharField(max_length=255)
     password=models.CharField(max_length=8)
+    # username = models.CharField(max_length=150, unique=True,null=True)
+    objects=CustomUserManager()
 
     USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS=['password']
+    REQUIRED_FIELDS=['user_name','password']
 
     
     def __str__(self):
-        return self.username
+        return self.email
 
 class Order(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE) 

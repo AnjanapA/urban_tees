@@ -42,6 +42,7 @@ path('user_single_product/<int:id>/', views.user_single_product, name='user_sing
 path('wishlist_page/', views.wishlist_page, name='wishlist_page'),
 path('cart_page', views.cart_page, name='cart_page'),
 path('user_order_review/<int:id>/', views.user_order_review, name='user_order_review'),
+
 path('user_payment/<int:id>/', views.user_payment, name='user_payment'),
 path('myorder_page', views.myorder_page, name='myorder_page'),
 ]

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,141 +14,76 @@
         rel="stylesheet">
 </head>
 
-<body style="font-family: 'Poppins', sans-serif; background-color: #f8f9fa;">
+<body style="
+  font-family: 'Poppins', sans-serif;
+  background-image: url('{% static 'images/acc_bg.jpg' %}');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
+    <div class="container" style="max-width: 400px; margin-top: 50px; min-height: 500px;">
 
-    <div class="container" style="max-width: 400px; margin-top: 50px;min-height: 500px;">
-
-        <div class="bg-white p-4 rounded shadow">
+        <div class=" p-4 rounded shadow" style=" background-color: rgba(0, 0, 0, 0.481); border: 2px solid red;">
             {% if value == 'login' %}
             <form action="{% url 'login_acc' %}" method="post" enctype="multipart/form-data" id="LoginForm"
                 style="display: block; transition: all 0.3s ease;" onload="loginload()">
                 {% csrf_token %}
-                <div class="d-flex justify-content-between position-relative mb-4"
-                    style="border-radius: 30px; overflow: hidden; border: 2px solid none; width: 300px; margin: 50px auto;">
-
-                    <a href="{% url 'login_acc' %}" onclick="showLogin()" class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        login
+                <div class="d-flex justify-content-between mb-4"
+                    style="border-radius: 30px; overflow: hidden; width: 300px; margin: 50px auto;">
+                    <a href="{% url 'login_acc' %}" class="btn w-100"
+                        style="background-color: #e63946; color: white; border: none; padding: 10px 0; font-weight: 500;">
+                        Login
                     </a>
-                    <a href="{% url 'register' %}" onclick="showRegister()"
-                        class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        register
+                    <a href="{% url 'register' %}" class="btn w-100"
+                        style="background-color: white; color: red; border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500;">
+                        Register
                     </a>
-
-
-
                 </div>
 
-                <div class=" row d-flex justify-content-between position-relative mb-4">
+                <div class="mb-3">{{ form.email }}</div>
+                <div class="mb-3">{{ form.password }}</div>
 
-
-                    {{ form.email }}
-                </div>
-                <div class=" row d-flex justify-content-between position-relative mb-4">
-
-                    {{ form.password }}
-                </div>
-                <!-- <div class=" row d-flex justify-content-between position-relative mb-4">
-
-                    <input type="submit" class="btn btn-success w-100" value="Login" id="loginvalid" name="loginvalid">
-                </div> -->
-
-                <button type="submit" name="login" class="btn btn-primary w-100" value="login" id="loginvalid"
-                    name="loginvalid">
-                    login</button>
+                <button type="submit" name="login" class="btn w-100"
+                    style="background-color: #e63946; color: rgb(0, 0, 0); border: none; padding: 10px 0; font-weight: 500;"
+                    value="login">Login</button>
             </form>
-            {% else %}
             {% if messages %}
             {% for message in messages %}
             <div class="alert alert-danger mt-3">{{ message }}</div>
             {% endfor %}
             {% endif %}
 
-
+            {% else %}
+            
 
             <form action="{% url 'register' %}" method="post" enctype="multipart/form-data" id="RegForm"
                 style="display: block; transition: all 0.3s ease;" onload="registerload()">
                 {% csrf_token %}
-                <div class="d-flex justify-content-between position-relative mb-4"
-                    style="border-radius: 30px; overflow: hidden; border: 2px solid none; width: 300px; margin: 50px auto;">
-
-                    <!-- <button onclick="showLogin()" type="submit" name="login"
-                        class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        Login
-
-                    </button>
-
-
-                    <button onclick="showRegister()" type="submit" name="register"
-                        class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        Register
-                    </button> -->
-
-                    <a href="{% url 'login_acc' %}" onclick="showLogin(event)"
-                        class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        login
-                    </a>
-                    <a href="{% url 'register' %}" onclick="showRegister(event)"
-                        class="btn btn-warning w-50 rounded-0 text-black"
-                        style="border-top-right-radius: 30px; border-bottom-right-radius: 30px; padding: 10px 0; font-weight: 500; transition: all 0.3s ease;">
-                        register
-                    </a>
-
-
+                <div class="d-flex justify-content-between mb-4"
+                    style="border-radius: 30px; overflow: hidden; width: 300px; margin: 50px auto;">
+                    <a href="{% url 'login_acc' %}" class="btn w-100"
+                        style="background-color: white; color: red; ">Login</a>
+                    <a href="{% url 'register' %}" class="btn w-100"
+                        style="background-color: #e63946; color: white; border: none;">Register</a>
                 </div>
 
-                <div class=" row d-flex justify-content-between position-relative mb-4">
-                    {{ form1.user_name }}
-                </div>
-                <div class=" row d-flex justify-content-between position-relative mb-4">
+                <div class="mb-3">{{ form1.user_name }}</div>
+                <div class="mb-3">{{ form1.email }}</div>
 
-                    {{ form1.email }}
-                </div>
-                <button type="submit" name="send_otp" class="btn btn-primary w-100" value="send_otp"
-                    style="display: block;">
-                    send OTP</button>
-
-
-                <!-- <div class=" row d-flex justify-content-between position-relative mb-4">
-
-                    {{ form1.password }}
-                </div>
-                <div class=" row d-flex justify-content-between position-relative mb-4">
-
-                    {{ form1.confirm_password }}
-                </div>
-                <div class=" row d-flex justify-content-between position-relative mb-4">
-
-
-                    {{ form1.phone }}
-                </div>
-                <div class=" row d-flex justify-content-between position-relative mb-4" style="display: block;">
-
-
-                    <select name="role">
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                </div>
-
-                <button type="submit" name="register" class="btn btn-primary w-100" value="register" id="registervalid"
-                    name="registervalid" style="display: block;">
-                    Register</button> -->
+                <button type="submit" name="send_otp" class="btn w-100"
+                    style="background-color: #e63946; color: rgb(0, 0, 0); border: none; padding: 10px 0; font-weight: 500;">Send
+                    OTP</button>
             </form>
-
-            <!-- {% endif %}
-
             {% if messages %}
             {% for message in messages %}
-            <div class="alert alert-success mt-3">{{ message }}</div>
+            <div class="alert alert-danger mt-3">{{ message }}</div>
             {% endfor %}
             {% endif %}
- -->
-
+            {% endif %}
         </div>
     </div>
 

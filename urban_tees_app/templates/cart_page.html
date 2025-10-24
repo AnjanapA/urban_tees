@@ -9,19 +9,19 @@
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
             <div class="card w-100 position-relative">
 
-                <!-- Since product image isn't in model, you can only show it if stored somewhere -->
                 <a href="#">
-                    <img src="{% static 'path/to/default.jpg' %}" class="card-img-top" alt="{{ cart.product_name }}"
+                    <img src="{% static cart.item_image1 %}" class="card-img-top" alt="{{ cart.product_name }}"
                         style="max-height: 200px; object-fit: contain;">
                 </a>
 
                 <div class="card-body">
                     <h5 class="card-title">{{ cart.product_name }}</h5>
-                    <p class="card-text">Size: {{ cart.size|title }}</p>
+                    <p class="card-text">Size: {{ cart.size }}</p>
                     <p class="card-text">Quantity: {{ cart.quantity }}</p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <span class="text-danger fw-bold">₹{{ cart.product_price }}</span>
-                        <span class="text-muted">Total: ₹{{ cart.product_price|multiply:cart.quantity }}</span>
+                        <!-- <span class="text-muted">Total: ₹{{ cart.total_price}}</span> -->
+                        <!-- |multiply:cart.quantity  -->
                     </div>
                 </div>
 
@@ -31,15 +31,23 @@
                         <input type="hidden" name="id" value="{{ cart.id }}">
                         <input type="hidden" name="action" value="remove">
                         <button type="submit" class="btn btn-outline-danger w-100">Remove from Cart</button>
+                        <a href="{% url 'user_payment' cart.id %}" class="btn btn-outline-danger w-100">Buy Now</a>
                     </form>
+                    <!-- <form method="post" action="{% url 'user_payment' cart.id %}" class="w-100 text-center">
+                        <button type="submit" class="btn btn-outline-danger w-100">Buy Now</button>
+                    </form> -->
+                    <!-- <div>
+            {% if messages %}
+            <div class="alert alert-success mt-3">{{ message }}</div>
+            {% endif %}
+                </div> -->
                 </div>
             </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-center">You haven't added any products to your cart yet.</p>
+            {% endif %}
         </div>
-        {% endfor %}
-        {% else %}
-        <p class="text-center">You haven't added any products to your cart yet.</p>
-        {% endif %}
     </div>
-</div>
 
-{% endblock %}
+    {% endblock %}

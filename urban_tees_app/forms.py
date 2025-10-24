@@ -10,11 +10,15 @@ class LoginForm(forms.ModelForm):
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter email'
+                'placeholder': 'Enter email',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                         'border-radius:6px; padding:10px; width:100%;'
             }),
             'password': forms.PasswordInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter password'
+                'placeholder': 'Enter password',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                         'border-radius:6px; padding:10px; width:100%;'
             }),
         }
 
@@ -26,11 +30,17 @@ class SendOTPForm(forms.ModelForm):
         widgets = {
             'user_name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter username'
+                'placeholder': 'Enter username',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                'border-radius:6px; padding:10px; width:100%;'
+
             }),
             'email': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter email'
+                'placeholder': 'Enter email',  
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                'border-radius:6px; padding:10px; width:100%;'
+
             }),
         }
 
@@ -40,7 +50,9 @@ class VerifyOTPForm(forms.Form):
         max_length=6,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Enter OTP'
+            'placeholder': 'Enter OTP',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                'border-radius:6px; padding:10px; width:100%;'
         })
     )
 
@@ -56,11 +68,15 @@ class RegisterForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter password'
+                'placeholder': 'Enter password',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                'border-radius:6px; padding:10px; width:100%;'
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter phone number'
+                'placeholder': 'Enter phone number',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                'border-radius:6px; padding:10px; width:100%;'
             }),
             
         }
