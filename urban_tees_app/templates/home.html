@@ -25,12 +25,12 @@
         </ul>
         <ul class=" d-flex justify-content-between me-5">
 
-          <a class="btn btn-outline-success" href="{% url 'user_order_review' pro.id  %}">buy now</a>
-
+          <a class="btn btn-outline-success" href="{% url 'user_order_review' pro.id  %}" data-bs-toggle="modal" data-bs-target="#buyNowModal">buy now</a>
           <a class="btn action-btn btn-outline-danger" data-action="cartSlide" id="cartSlide" data-id="1">
             <!-- href="{% url 'cart_slide' pro.id  %}" -->
             add to cart</a>
-        </ul>
+          </ul>
+          {% include 'popup.html' %}
       </div>
     </div>
     {% endfor %}

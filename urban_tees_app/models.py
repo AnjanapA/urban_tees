@@ -61,9 +61,15 @@ class User(AbstractUser):
     ('user', 'User'),
     ('admin', 'Admin'),
         ]
+    GENDER=[
+        ('male','Male'),
+        ('female','Female'),
+        ('other','Other')
+    ]
     user_name = models.CharField(max_length=150, unique=True)
     email=models.EmailField("Email", max_length=254,unique=True)
     phone=models.CharField("Phone", max_length=255)
+    gender=models.CharField(max_length=10, choices=GENDER)
     address=models.CharField(max_length=255)
     place=models.CharField(max_length=255)
     city=models.CharField(max_length=255)
@@ -81,11 +87,15 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.email
+class oreder_item(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE) 
 
+    product = models.ForeignKey('Product', on_delete=models.SET_NULL,null=True)
+    
 class Order(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE) 
 
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.SET_NULL,null=True)
     product_name = models.CharField(max_length=100)
 
     SIZE_CHOICES = [
@@ -135,6 +145,7 @@ class Wishlist(models.Model):
         return f"{self.user.username} -> {self.product.item_name}"
 
 class Cart(models.Model):
+    
     SIZE=[
         ('small','Small'),
         ('medium','Medium'),

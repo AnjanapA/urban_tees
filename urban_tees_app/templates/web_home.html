@@ -23,7 +23,7 @@
 
       <div class="d-flex align-items-center">
         <a href="{% url 'login_acc' %}" class="btn btn-outline-light me-2">
-          Login
+          Login/Register
         </a>
       </div>
 
@@ -75,8 +75,11 @@
       {% for pro in item %}
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
         <div class="card w-100">
-          <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
-            style="height: auto; max-height: 200px; object-fit: contain;">
+          <a href="{% url 'user_single_product' pro.id %}">
+
+            <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
+              style="height: auto; max-height: 200px; object-fit: contain;">
+          </a>
           <div class="card-body">
             <h5 class="card-title">{{ pro.item_name }}</h5>
           </div>
@@ -130,15 +133,15 @@
   </footer>
 
 <script>
-    const userIsLoggedIn = false; 
+    // const userIsLoggedIn = false; 
 
-    if (!userIsLoggedIn) {
-        document.addEventListener('click', function(e) {
-            e.preventDefault();
-            alert("You have to login");
-            window.location.href = '/login';  
-        }, { once: true }); 
-    }
+    // if (!userIsLoggedIn) {
+    //     document.addEventListener('click', function(e) {
+    //         e.preventDefault();
+    //         alert("You have to login");
+    //         window.location.href = '/login';  
+    //     }, { once: true }); 
+    // }
 </script>
 </body>
 

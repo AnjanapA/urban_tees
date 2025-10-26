@@ -31,6 +31,7 @@ class UserAdmin(admin.ModelAdmin):
     'username',
     'email',
     'phone',
+    'gender',
     'address',
     'place',
     'city',

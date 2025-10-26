@@ -57,21 +57,22 @@
 {% endblock %}
 
 {% block script %}
+
 <script>
     const products = [
         {% for pro in item %}
     {
         id: "{{ pro.id }}",
-        item_name : "{{ pro.item_name|escapejs }}",
-        item_description: "{{ pro.item_description|escapejs }}",
-        item_image: "{% static pro.item_image1 %}",
-        new_price: "{{ pro.new_price }}",
-        old_price: "{{ pro.old_price }}",
-        offer: "{{ pro.offer }}"
+            item_name : "{{ pro.item_name|escapejs }}",
+                item_description: "{{ pro.item_description|escapejs }}",
+                    item_image: "{% static pro.item_image1 %}",
+                        new_price: "{{ pro.new_price }}",
+                            old_price: "{{ pro.old_price }}",
+                                offer: "{{ pro.offer }}"
     },
     {% endfor %}
     ];
-
+    console.log("Products:", products);
     const itemsPerPage = 8;
     let currentPage = 1;
 

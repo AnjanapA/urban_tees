@@ -357,7 +357,6 @@ def login_acc(request):
         # print(email,password)
         # user=User.objects.get(email=email)
         myuser = authenticate(username=email,password=password)  
-        print(myuser)
         if myuser:
             login(request,myuser)
             return redirect('home')
@@ -378,16 +377,27 @@ def logout_acc(request):
 
 def userinfo(request):
     if request.method == 'POST':
-        form = UserInfoForm(request.POST)
-        if form.is_valid():
-            cleaned_data = form.cleaned_data
-            return render(request, 'home.html', {'data': cleaned_data})
-    else:
-        form = UserInfoForm()
+        gender=request.POST.get('gender')
+        address=request.POST.get('address')
+        city=request.POST.get('city')
+        place=request.POST.get('place')
+        pincode=request.POST.get('pincode')
 
-    return render(request, 'userinfo.html', {'form': form})
+        id=request.user.id
+
+        u_info=User.objects.filter(id=id).update(
+            gender=gender,
+            address=address,
+            city=city,
+            place=place,
+            pincode=pincode
+
+        )
+
+    return render(request, 'userinfo.html')
 
 
+@login_required
 
 def user_products(request, category=None):
     categories = ['mens', 'womens', 'girls', 'boys']
@@ -395,9 +405,9 @@ def user_products(request, category=None):
         item_details = Product.objects.filter(category=category)
     else:
         item_details = Product.objects.all()
-    return render(request, 'user_products.html', {
-        'item': item_details,
-    })
+        print(item_details)
+    print(item_details)
+    return render(request, 'user_products.html', {'item': item_details})
 
 # def user_products(request, category=None):
 #     categories = ['mens', 'womens', 'girls', 'boys']
@@ -427,6 +437,10 @@ def user_payment(request, id):
     item_details=Product.objects.get(id=id)
     return render(request, 'user_payment.html', {'item':item_details})
 
+def cart_payment(request, product_id):
+    item_details=Cart.objects.get(product_id=product_id)
+    return render(request, 'user_payment.html', {'item':item_details})
+
 def myorder_page(request):
     return render(request, 'user_myorder_page.html')
 
@@ -438,7 +452,7 @@ def cart_slide(request,id):
 # def wishlist_page(request):
 #     wishlist_items = Wishlist.objects.all
 #     return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
-
+@login_required
 def wishlist_page(request):
     if request.method == "POST":
         product_id = request.POST.get('id')
@@ -453,11 +467,11 @@ def wishlist_page(request):
             elif action == 'remove':
                 if product_id in wishlist:
                     wishlist.remove(product_id)
-
+                    messages.success(request, "Product removed from your wishlist")
             request.session['wishlist'] = wishlist
 
             return JsonResponse({'status': 'success', 'wishlist_count': len(wishlist)})
-
+        
         return JsonResponse({'status': 'error', 'message': 'No product ID'})
 
     wishlist_ids = request.session.get('wishlist', [])
@@ -512,3 +526,6 @@ def cart_page(request):
 def user_orders(request):
     orders = Order.objects.filter(user=request.user)
     return render(request, 'user_myorder_page.html', {'orders': orders})
+
+def popup(request):
+    return render(request, 'popup.html')    

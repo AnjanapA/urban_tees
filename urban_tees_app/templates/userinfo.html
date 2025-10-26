@@ -39,7 +39,9 @@
                     </div>
 
                 </div>
-
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}" style="color: white;">Home</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'myorder_page' %}" style="color: white;">Order History</a>
                 </li>
@@ -68,27 +70,33 @@
 
                             <h4 class="mb-4 text-center" style="color: white;">User Info</h4>
 
+                            <div class="col-sm-9">
+
+                                <input type="hidden" name="id" maxlength="100" class="form-control"
+                                    value="{{ user.id }}" id="id">
+                            </div>
+
                             <div class="mb-3 row">
                                 <label for="id_name" class="col-sm-3 col-form-label" style="color: white;">Name</label>
                                 <div class="col-sm-9">
 
                                     <input type="text" name="name" maxlength="100" class="form-control"
                                         value="{{ user.user_name }}" id="id_name" required
-                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
+                                        style="border:none; border-bottom:2px solid #ffffff; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
                                 </div>
                             </div>
-
+                            
                             <div class="mb-3 row">
                                 <label for="id_gender" class="col-sm-3 col-form-label"
-                                    style="color: white;">Gender</label>
+                                style="color: white;">Gender</label>
                                 <div class="col-sm-9">
-
-                                    <select name="gender" class="form-select" id="id_gender" required
+                                    <select name="gender" class="form-select" id="id_gender" value="{{ user.gender }}"
+                                        required
                                         style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
-                                        <option value="" style="color:black;">Select gender</option>
-                                        <option value="M" style="color:black;">Male</option>
-                                        <option value="F" style="color:black;">Female</option>
-                                        <option value="O" style="color:black;">Other</option>
+                                        <option value="" style="color:black;" >Select gender</option>
+                                        <option value="Male" style="color:black;" {% if user.gender == 'Male' %} selected {% endif %}>Male</option>
+                                        <option value="Female" style="color:black;" {% if user.gender == 'Female' %} selected {% endif %}>Female</option>
+                                        <option value="Other" style="color:black;" {% if user.gender == 'Other' %} selected {% endif %}>Other</option>
                                     </select>
                                 </div>
                             </div>
@@ -99,7 +107,7 @@
                                 <div class="col-sm-9">
 
                                     <textarea name="address" class="form-control" id="id_address" rows="3" required
-                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;"></textarea>
+                                        style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">{{ user.address }}</textarea>
                                 </div>
                             </div>
 
@@ -108,8 +116,8 @@
                                     style="color: white;">Place</label>
                                 <div class="col-sm-9">
 
-                                    <input type="text" name="place" maxlength="100" class="form-control" id="id_place"
-                                        required
+                                    <input type="text" name="place" maxlength="100" class="form-control"
+                                        value="{{ user.place }}" id="id_place" required
                                         style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
                                 </div>
                             </div>
@@ -118,8 +126,8 @@
                                 <label for="id_city" class="col-sm-3 col-form-label" style="color: white;">City</label>
                                 <div class="col-sm-9">
 
-                                    <input type="text" name="city" maxlength="100" class="form-control" id="id_city"
-                                        required
+                                    <input type="text" name="city" maxlength="100" class="form-control"
+                                        value="{{ user.city }}" id="id_city" required
                                         style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
                                 </div>
                             </div>
@@ -130,7 +138,7 @@
                                 <div class="col-sm-9">
 
                                     <input type="text" name="pincode" maxlength="6" class="form-control" id="id_pincode"
-                                        required
+                                        value="{{ user.pincode }}" required
                                         style="border:none; border-bottom:2px solid #eee9e9; background:transparent; outline:none; padding:8px 4px; font-size:16px; color:white;">
                                 </div>
                             </div>
@@ -146,7 +154,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" name="done" class="btn w-100"
+                            <button type="submit" name="save" class="btn w-100"
                                 style="background-color: #050001; color: rgb(255, 0, 0); border: none; padding: 10px 0; font-weight: 500;">
                                 Save
                             </button>

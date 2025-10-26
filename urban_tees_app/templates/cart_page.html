@@ -31,18 +31,23 @@
                         <input type="hidden" name="id" value="{{ cart.id }}">
                         <input type="hidden" name="action" value="remove">
                         <button type="submit" class="btn btn-outline-danger w-100">Remove from Cart</button>
-                        <a href="{% url 'user_payment' cart.id %}" class="btn btn-outline-danger w-100">Buy Now</a>
+                        <a href="{% url 'cart_payment' cart.product_id %}" class="btn btn-outline-danger w-100"
+                            data-bs-toggle="modal" data-bs-target="#buyNowModal">Buy Now</a>
                     </form>
-                    <!-- <form method="post" action="{% url 'user_payment' cart.id %}" class="w-100 text-center">
-                        <button type="submit" class="btn btn-outline-danger w-100">Buy Now</button>
-                    </form> -->
-                    <!-- <div>
-            {% if messages %}
-            <div class="alert alert-success mt-3">{{ message }}</div>
-            {% endif %}
-                </div> -->
+
+                    
                 </div>
+                
             </div>
+            {% include 'popup.html' %}
+            <!-- <form method="post" action="{% url 'user_payment' cart.id %}" class="w-100 text-center">
+                <button type="submit" class="btn btn-outline-danger w-100">Buy Now</button>
+            </form> -->
+            <!-- <div>
+    {% if messages %}
+    <div class="alert alert-success mt-3">{{ message }}</div>
+    {% endif %}
+        </div> -->
             {% endfor %}
             {% else %}
             <p class="text-center">You haven't added any products to your cart yet.</p>
