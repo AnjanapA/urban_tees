@@ -41,13 +41,15 @@
 
                     {{ form.otp }}
                 </div>
-                <button type="submit" name="verify_otp" class="btn w-100"
+                <button type="submit" name="verify_otp" class="btn w-100 verify" id="verify_otp"
                     style="background-color: #e63946; color: rgb(0, 0, 0); border: none; padding: 10px 0; font-weight: 500;"
                     value="verify">
                     verify OTP</button>
-
-
-
+                <a href="{% url 'resend' %}" name="resend" class="btn w-100 mt-3 resend" id="resend"
+                    style="display:block;  background-color: #f7f6f6; color: rgb(255, 0, 0); border: none; padding: 10px 0; font-weight: 500; text-align: center; text-decoration: none;"
+                    value="resend">
+                    Resend
+                </a>
 
                 {% if messages %}
                 {% for message in messages %}
@@ -58,6 +60,35 @@
             </form>
         </div>
     </div>
+    <script>
+
+        const verifyBtn = document.getElementById('verify_otp');
+        const resendLink = document.getElementById('resend');
+
+        function showResend() {
+
+            if(resendLink.disabled==false)
+        {
+
+            verifyBtn.disabled=false;
+            resendLink.style.background = white;
+            resendLink.style.color=red;
+            resendLink.style.pointerEvents=blur;
+        }
+        else
+        {
+            verifyBtn.disabled=true;
+            resendLink.style.background = red;
+            resendLink.style.color=white;
+            resendLink.style.pointerEvents=none;
+        }
+        resendLink.onclick = () =>verifyBtn.disabled=false;
+        
+        }
+
+        setInterval(showResend,30000);
+         
+    </script>
 </body>
 
 </html>

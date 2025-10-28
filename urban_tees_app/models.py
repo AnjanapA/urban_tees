@@ -87,11 +87,37 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.email
-class oreder_item(models.Model):
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} -> {self.product.item_name}"
+
+class Cart(models.Model):
+    
+    SIZE=[
+        ('small','Small'),
+        ('medium','Medium'),
+        ('large','Large'),
+        ('extralarge','Extralarge'),
+    ]
+    user_id=models.CharField(max_length=255)
+    product_id=models.CharField(max_length=255)
+    product_name=models.CharField(max_length=255)
+    product_price=models.IntegerField()
+    quantity = models.IntegerField()
+    size = models.CharField(max_length=10, choices=SIZE)
+    oreder_item = models.ForeignKey('Oreder_item', on_delete=models.CASCADE,null=True) 
+
+class Oreder_item(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE) 
 
     product = models.ForeignKey('Product', on_delete=models.SET_NULL,null=True)
-    
+    quantity = models.IntegerField()
+
+
 class Order(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE) 
 
@@ -135,29 +161,4 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.order_no} - {self.product_name}"
-
-
-class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.user.username} -> {self.product.item_name}"
-
-class Cart(models.Model):
-    
-    SIZE=[
-        ('small','Small'),
-        ('medium','Medium'),
-        ('large','Large'),
-        ('extralarge','Extralarge'),
-    ]
-    user_id=models.CharField(max_length=255)
-    product_id=models.CharField(max_length=255)
-    product_name=models.CharField(max_length=255)
-    product_price=models.IntegerField()
-    quantity = models.IntegerField()
-    size = models.CharField(max_length=10, choices=SIZE)
-
-
 

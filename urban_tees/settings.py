@@ -129,8 +129,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'anjanaprarath@gmail.com'
-EMAIL_HOST_PASSWORD = 'qlpw mvzo uljx emcw'
+
+
+EMAIL_HOST_USER = 'urbantees2k25@gmail.com'
+EMAIL_HOST_PASSWORD = 'dvgc seqh icfd ctdm'
+
+# EMAIL_HOST_USER = 'anjanaprarath@gmail.com'
+# EMAIL_HOST_PASSWORD = 'qlpw mvzo uljx emcw'
 # SESSION_COOKIE_AGE = 300
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 

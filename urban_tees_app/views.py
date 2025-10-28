@@ -12,7 +12,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.conf.urls import handler404
 from django.contrib.auth import authenticate, login, logout
-
+from datetime import time
 
 def custom_404_view(request, exception):
     return render(request, '404.html', status=404)
@@ -125,7 +125,7 @@ def admin_add_product(request):
 
     return render(request,'admin_add_product.html',{'upload':upload})
 
-@login_required(login_url='/login/')
+#@login_required(login_url='/login/')
 
 def admin_view_product(request):
     # item_details=Product.objects.all()
@@ -237,7 +237,7 @@ def send_otp(request,email,username):
     send_mail(
         subject='OTP Code',
         message=f'Your OTP is: {otp}',
-        from_email='anjanaprarath@gmail.com',
+        from_email='urbantees2k25@gmail.com',
         recipient_list=[email],
     )
 
@@ -246,10 +246,12 @@ def send_otp(request,email,username):
 def register(request):
     if request.method == 'POST':
         reg_form=SendOTPForm(request.POST)
+        print(reg_form)
         if reg_form.is_valid():
             username=reg_form.cleaned_data['user_name']
             email=reg_form.cleaned_data['email']
-            send_otp(request,email,username)      
+            send_otp(request,email,username)
+            print(send_otp)
             return redirect('verify_otp')
         else:
             return render(request,'account.html',{'form':reg_form,'value':'register'})
@@ -258,6 +260,22 @@ def register(request):
         reg_form1=SendOTPForm()
         return render(request,'account.html',{'form1':reg_form1,'value':'register'})
 
+def resend(request):
+    otp=random.randint(100000,999999)
+    print(otp)
+    request.session['otp'] = otp
+    email=request.session.get('email')
+    username=request.session.get('username')
+    request.session['email'] = email
+    send_mail(
+        subject='OTP Code',
+        message=f'Your OTP is: {otp}',
+        from_email='urbantees2k25@gmail.com',
+        recipient_list=[email],
+    )
+
+    otp_form=VerifyOTPForm()
+    return render(request,'verify_otp.html',{'form':otp_form,'value':'verify'})
 
 def verify_otp(request):
     if request.method == 'POST':
@@ -266,10 +284,10 @@ def verify_otp(request):
             if otp_form.is_valid():
                 entered_otp = otp_form.cleaned_data['otp']
                 session_otp = str(request.session.get('otp'))
-                
                 if entered_otp == session_otp:
                     messages.success(request,'Email varified successfully.')
                     return redirect('final_register')
+                # return render(request,'verify_otp.html',{'form':otp_form,'value':'verify'})
         else:
             messages.error(request,'Could not verify email')
 
@@ -397,7 +415,7 @@ def userinfo(request):
     return render(request, 'userinfo.html')
 
 
-@login_required
+#@login_required
 
 def user_products(request, category=None):
     categories = ['mens', 'womens', 'girls', 'boys']
@@ -421,14 +439,14 @@ def user_products(request, category=None):
 #         'category': category,
 #     })
 
-@login_required(login_url='/login/')
+#@login_required(login_url='/login/')
 def user_single_product(request, id):
     if is_user(request)==True:
 
         item_details=Product.objects.get(id=id)
         return render(request, 'user_single_product.html', {'item':item_details})
 
-@login_required(login_url='/login/')
+#@login_required(login_url='/login/')
 def user_order_review(request, id):
     item_details=Product.objects.get(id=id)
     return render(request, 'user_order_review.html', {'item':item_details})
@@ -452,7 +470,7 @@ def cart_slide(request,id):
 # def wishlist_page(request):
 #     wishlist_items = Wishlist.objects.all
 #     return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
-@login_required
+#@login_required
 def wishlist_page(request):
     if request.method == "POST":
         product_id = request.POST.get('id')
@@ -480,7 +498,7 @@ def wishlist_page(request):
 
 
 
-@login_required
+#@login_required
 def cart_page(request):
     user = request.user
 
@@ -514,18 +532,22 @@ def cart_page(request):
 
         elif action == 'remove':
             Cart.objects.filter(user_id=user.id, product_id=product_id).delete()
-            messages.success(request, "Product removed from your cart!")
-            # return JsonResponse({'status': 'success'})
+            # messages.success(request, "Product removed from your cart!")
+            return JsonResponse({'status': 'success'})
             # return render(request,'cart_page.html')
 
-        # return JsonResponse({'status': 'error', 'message': 'Invalid action'})
+        return JsonResponse({'status': 'error', 'message': 'Invalid action'})
     cart_items = Cart.objects.filter(user_id=user.id)
     return render(request, 'cart_page.html', {'cart_items': cart_items})
 
-@login_required
+#@login_required
 def user_orders(request):
     orders = Order.objects.filter(user=request.user)
     return render(request, 'user_myorder_page.html', {'orders': orders})
 
 def popup(request):
     return render(request, 'popup.html')    
+
+
+def otp_time():
+    now=time.now()

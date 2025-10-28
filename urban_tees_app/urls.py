@@ -30,6 +30,7 @@ path('register',views.register,name='register'),
 path('send_otp/<str:email>/', views.send_otp, name='send_otp'),
 path('verify_otp', views.verify_otp, name='verify_otp'),
 path('final_register', views.final_register, name='final_register'),
+path('resend', views.resend, name='resend'),
 
 path('cart_slide/<int:id>/',views.cart_slide,name='cart_slide'),
 path('logout',views.logout_acc,name='logout'),
