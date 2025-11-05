@@ -50,6 +50,11 @@
                 <button type="submit" name="login" class="btn w-100"
                     style="background-color: #e63946; color: rgb(0, 0, 0); border: none; padding: 10px 0; font-weight: 500;"
                     value="login">Login</button>
+
+                <div class="mb-3">
+                
+                    <a href="{% url 'new_password' %}">Forgot password</a>
+                </div>
             </form>
             {% if messages %}
             {% for message in messages %}

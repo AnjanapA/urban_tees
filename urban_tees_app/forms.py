@@ -1,6 +1,49 @@
 from django import forms
 from .models import User
 
+class EmailForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields = ['email']
+
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter email',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                         'border-radius:6px; padding:10px; width:100%;'
+            }),
+        }
+    otp = forms.CharField(
+        max_length=6,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter OTP',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                'border-radius:6px; padding:10px; width:100%;'
+        })
+    )
+
+class PasswordForm(forms.Form):
+    class Meta:
+        fields = ['new_password', 're_password']
+
+        widgets = {
+            'new_password': forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter new password',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                         'border-radius:6px; padding:10px; width:100%;'
+            }),
+            're_password': forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Re-enter new password',
+                'style': 'background-color:black; color:white; border:2px solid red; '
+                         'border-radius:6px; padding:10px; width:100%;'
+            }),
+
+        }
+
 
 class LoginForm(forms.ModelForm):
     class Meta:
@@ -16,7 +59,7 @@ class LoginForm(forms.ModelForm):
             }),
             'password': forms.PasswordInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter password',
+                'placeholder': 'Enter  password',
                 'style': 'background-color:black; color:white; border:2px solid red; '
                          'border-radius:6px; padding:10px; width:100%;'
             }),

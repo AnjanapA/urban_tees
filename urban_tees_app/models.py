@@ -159,6 +159,11 @@ class Order(models.Model):
     ]
     order_status = models.CharField(max_length=15, choices=ORDER_STATUS_CHOICES)
 
+    user_content=models.BooleanField(default=False)
+    user_image= models.ImageField(upload_to='images/')
+    user_text=models.CharField(max_length=15)
+
+
     def __str__(self):
         return f"Order {self.order_no} - {self.product_name}"
 

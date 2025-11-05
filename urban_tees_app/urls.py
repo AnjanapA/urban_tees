@@ -19,10 +19,19 @@ path('admin_delete_product/<int:id>',views.admin_delete_product,name='admin_dele
 
 
 # user
+
+path('',views.web_home,name='web_home'),
 path('custom_404_view',views.custom_404_view,name='custom_404_view'),
 path('web_home',views.web_home,name='web_home'),
 path('account',views.account,name='account'),
 path('home',views.home,name='home'),
+
+path('new_password',views.new_password,name='new_password'),
+# path('verify_email',views.verify_email,name='verify_email'),
+path('password',views.password,name='password'),
+path('verify_email',views.verify_emailotp,name='verify_emailotp'),
+path('send-email',views.send_email,name='send_email'),
+
 path('logout',views.logout,name='logout'),
 path('userinfo',views.userinfo,name='userinfo'),
 path('login',views.login_acc,name='login_acc'),

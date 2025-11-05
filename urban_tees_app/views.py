@@ -4,7 +4,7 @@ from django.template import loader
 from django.conf import settings
 from .models import Product,User,Order,Wishlist,Cart
 import os
-from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm
+from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm,EmailForm,PasswordForm
 from django.contrib import messages
 from django.core.mail import send_mail
 import random
@@ -13,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.conf.urls import handler404
 from django.contrib.auth import authenticate, login, logout
 from datetime import time
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+# from django.contrib.sites.models import Site
 
 def custom_404_view(request, exception):
     return render(request, '404.html', status=404)
@@ -227,6 +230,69 @@ def account(request):
 def logout(request):
     return redirect('web_home')
 
+# here
+
+def new_password(request):
+   
+
+    verify_form=EmailForm()
+    return render(request,'new_password.html',{'form':verify_form})
+
+def send_email(request):
+    if request.method=='POST':
+        email=request.POST.get('email')
+        otp=random.randint(100000,999999)
+        print(otp)
+        request.session['otp'] = otp
+        request.session['email'] = email
+        send_mail(
+            subject='OTP Code for email verification ',
+            message=f'Your OTP is: {otp}',
+            from_email='urbantees2k25@gmail.com',
+            recipient_list=[email],
+        )
+    verify_form=EmailForm()
+    return render(request,'new_password.html',{'form':verify_form})
+
+def verify_emailotp(request):
+    if request.method == 'POST':
+        # emailotp_form=EmailForm(request.POST)
+        entered_otp =request.POST.get('otp')
+        session_otp = str(request.session.get('otp'))
+        if entered_otp == session_otp:
+            messages.success(request,'Email varified successfully.')
+            
+        else:
+            messages.error(request,'Could not verify email')
+
+        verifyotp_form=PasswordForm()
+        return render(request, 'new_password.html',{'form':verifyotp_form})
+
+def password(request):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        re_password = request.POST.get('re_password')
+
+        if new_password == re_password:
+            email = request.session.get('email')
+            print(email)
+
+            try:
+                myuser = User.objects.get(email=email)
+            except User.DoesNotExist:
+                messages.error(request, 'User not found.')
+                return redirect('forgot_password')
+
+            myuser.set_password(new_password)
+            myuser.save()
+
+            messages.success(request, 'Password has been changed successfully.')
+            return redirect('login_acc')
+        else:
+            messages.error(request, 'Passwords do not match.')
+
+    forgot_form = PasswordForm()
+    return render(request, 'new_password.html', {'form': forgot_form})
 
 def send_otp(request,email,username):
     otp=random.randint(100000,999999)
@@ -234,6 +300,7 @@ def send_otp(request,email,username):
     request.session['otp'] = otp
     request.session['username'] = username
     request.session['email'] = email
+
     send_mail(
         subject='OTP Code',
         message=f'Your OTP is: {otp}',
