@@ -236,7 +236,7 @@ def new_password(request):
    
 
     verify_form=EmailForm()
-    return render(request,'new_password.html',{'form':verify_form})
+    return render(request,'new_password.html',{'form':verify_form,'choice':'forgot'})
 
 def send_email(request):
     if request.method=='POST':
@@ -252,7 +252,7 @@ def send_email(request):
             recipient_list=[email],
         )
     verify_form=EmailForm()
-    return render(request,'new_password.html',{'form':verify_form})
+    return render(request,'new_password.html',{'form':verify_form,'choice':'send_otp'})
 
 def verify_emailotp(request):
     if request.method == 'POST':
@@ -266,7 +266,7 @@ def verify_emailotp(request):
             messages.error(request,'Could not verify email')
 
         verifyotp_form=PasswordForm()
-        return render(request, 'new_password.html',{'form':verifyotp_form})
+        return render(request, 'new_password.html',{'form':verifyotp_form,'choice':'verify_otp'})
 
 def password(request):
     if request.method == 'POST':
@@ -518,9 +518,9 @@ def user_order_review(request, id):
     item_details=Product.objects.get(id=id)
     return render(request, 'user_order_review.html', {'item':item_details})
 
-def user_payment(request, id):
-    item_details=Product.objects.get(id=id)
-    return render(request, 'user_payment.html', {'item':item_details})
+# def user_payment(request, id):
+#     item_details=Product.objects.get(id=id)
+#     return render(request, 'user_payment.html', {'item':item_details})
 
 def cart_payment(request, product_id):
     item_details=Cart.objects.get(product_id=product_id)
@@ -570,42 +570,112 @@ def cart_page(request):
     user = request.user
 
     if request.method == "POST":
-        product_id = request.POST.get('id')
+        
         action = request.POST.get('action')
-        size = request.POST.get('size')
-        quantity = request.POST.get('quantity')
-        price = request.POST.get('price')
-        # total_price=price*quantity
+        product_id = request.POST.get('id')
+
+        # price = request.POST.get('price')
+        # product_image=request.POST.get('product_image')
 
         if not product_id:
             messages.success(request, "no matched items!")
 
         if action == 'add':
+            
+            size = request.POST.get('size')
+            quantity = request.POST.get('quantity')
+
+            user_text = request.POST.get('user_text')
+            design_file = request.FILES.get('user_image')
+
+            user_content = True if design_file else False
+            user_design_path = None
+
+            if design_file:
+                try:
+                    os.makedirs(settings.UPLOAD_IMG, exist_ok=True)  
+
+                    upload_path = os.path.join(settings.UPLOAD_IMG, design_file.name)
+                    print(upload_path)
+
+                    with open(upload_path, 'wb+') as destination:
+                        for chunk in design_file.chunks():
+                            destination.write(chunk)
+
+                    user_design_path = f'uploads/{design_file.name}'
+                    print(user_design_path)
+                except Exception as e:
+                    print("Error while saving design:", e)
+
+            product = Product.objects.get(id=product_id)
             existing = Cart.objects.filter(user_id=user.id, product_id=product_id, size=size).first()
             if existing:
                 existing.quantity += int(quantity)
                 existing.save()
             else:
-                product = Product.objects.get(id=product_id)
                 Cart.objects.create(
                     user_id=user.id,
                     product_id=product_id,
                     product_name=product.item_name,
-                    product_price=price,
+                    product_price=product.new_price,
                     quantity=quantity,
-                    size=size
+                    size=size,
+                    product_image=product.item_image1,
+                    user_content=user_content,
+                    user_image=user_design_path if user_design_path else None,
+                    user_text=user_text if user_text else '',
                 )
             return JsonResponse({'status': 'success'})
-
         elif action == 'remove':
             Cart.objects.filter(user_id=user.id, product_id=product_id).delete()
             # messages.success(request, "Product removed from your cart!")
-            return JsonResponse({'status': 'success'})
+            # return JsonResponse({'status': 'success'})
+            cart_items = Cart.objects.filter(user_id=user.id)
+            return render(request, 'cart_page.html', {'cart_items': cart_items})
+
             # return render(request,'cart_page.html')
 
         return JsonResponse({'status': 'error', 'message': 'Invalid action'})
     cart_items = Cart.objects.filter(user_id=user.id)
+    print(cart_items)
     return render(request, 'cart_page.html', {'cart_items': cart_items})
+
+def user_payment(request):
+    user = request.user
+
+    quantity=request.POST.get('quantity')
+    product_price=request.get('product_price')
+    total_amount=quantity*product_price
+    total_discount=quantity*total_discount
+
+    if request.method == "POST":
+        product_id = request.POST.get('id')
+        cart = Product.objects.get(id=product_id)
+        Cart.objects.create(
+            product_id=product_id,
+            product_price=cart.new_price,
+            quantity = cart.quantity,
+            total_amount=total_amount,
+            total_discount=total_discount
+        )
+
+        user_content=request.POST.get('user_content')
+        user_image=request.POST.get('user_image')
+        user_text=request.POST.get('user_text')
+        if user_content==True:
+            user_image.save()
+        user_text.save()
+        Order.objects.create(
+            user_content=user_content,
+            user_image=user_image,
+            user_text=user_text
+        )
+        return render(request, 'user_payment.html',{'order_items':order_items})
+
+    order_items = Cart.objects.filter(user_id=user.id)
+
+    return render(request, 'cart_page.html',{'order_items':order_items})
+
 
 #@login_required
 def user_orders(request):

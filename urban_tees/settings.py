@@ -16,6 +16,9 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_IMG = os.path.join(BASE_DIR,'urban_tees_app/static/images/')
 
+UPLOAD_IMG = os.path.join(BASE_DIR,'urban_tees/uploads/')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 

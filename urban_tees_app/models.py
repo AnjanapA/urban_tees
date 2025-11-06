@@ -110,7 +110,11 @@ class Cart(models.Model):
     quantity = models.IntegerField()
     size = models.CharField(max_length=10, choices=SIZE)
     oreder_item = models.ForeignKey('Oreder_item', on_delete=models.CASCADE,null=True) 
-
+    product_image=models.CharField(max_length=255,null=True)
+    user_content=models.BooleanField(default=False)
+    user_image= models.ImageField(upload_to='images/',null=True)
+    user_text=models.CharField(max_length=15,null=True)
+    
 class Oreder_item(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE) 
 
@@ -159,9 +163,6 @@ class Order(models.Model):
     ]
     order_status = models.CharField(max_length=15, choices=ORDER_STATUS_CHOICES)
 
-    user_content=models.BooleanField(default=False)
-    user_image= models.ImageField(upload_to='images/')
-    user_text=models.CharField(max_length=15)
 
 
     def __str__(self):

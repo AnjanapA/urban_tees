@@ -3,16 +3,14 @@
 {% block content %}
 
 <div class="container mt-4">
+    {% if cart_items %}
     <div class="row g-3">
-        {% if cart_items %}
         {% for cart in cart_items %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
             <div class="card w-100 position-relative">
 
-                <a href="#">
-                    <img src="{% static cart.item_image1 %}" class="card-img-top" alt="{{ cart.product_name }}"
-                        style="max-height: 200px; object-fit: contain;">
-                </a>
+                <img src="{% static cart.product_image %}" class="card-img-top" alt="{{ cart.product_name }}"
+                    style="max-height: 200px; object-fit: contain;">
 
                 <div class="card-body">
                     <h5 class="card-title">{{ cart.product_name }}</h5>
@@ -28,16 +26,16 @@
                 <div class="card-footer bg-transparent border-top-0">
                     <form method="post" action="{% url 'cart_page' %}" class="w-100 text-center">
                         {% csrf_token %}
-                        <input type="hidden" name="id" value="{{ cart.id }}">
+                        <input type="hidden" name="id" value="{{ cart.product_id }}">
                         <input type="hidden" name="action" value="remove">
                         <button type="submit" class="btn btn-outline-danger w-100">Remove from Cart</button>
                         <a href="{% url 'cart_payment' cart.product_id %}" class="btn btn-outline-danger w-100"
                             data-bs-toggle="modal" data-bs-target="#buyNow">Buy Now</a>
                     </form>
 
-                    
+
                 </div>
-                
+
             </div>
             {% include 'popup.html' %}
             <!-- <form method="post" action="{% url 'user_payment' cart.id %}" class="w-100 text-center">
@@ -48,11 +46,34 @@
     <div class="alert alert-success mt-3">{{ message }}</div>
     {% endif %}
         </div> -->
-            {% endfor %}
-            {% else %}
-            <p class="text-center">You haven't added any products to your cart yet.</p>
-            {% endif %}
-        </div>
     </div>
+    {% endfor %}
+        {% else %}
+        <p class="text-center">You haven't added any products to your cart yet.</p>
+    </div>
+    {% endif %}
+    <div class="row g-3">
+            <div class="row">
+                <div class="col-md-8 text-center">
 
-    {% endblock %}
+                    <p class="dropdown-item">Total Product Price</p>
+                </div>
+                <div class="col-md-3 text-center">
+
+                    <p>+{{ cart.total_amount }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 text-center">
+
+                    <p class="dropdown-item">Total Discount</p>
+                </div>
+                <div class="col-md-3 text-center">
+
+                    <p>-{{ cart.total_discount }}</p>
+                </div>
+            </div>
+    </div>
+</div>
+
+{% endblock %}

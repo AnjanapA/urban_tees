@@ -247,6 +247,9 @@
         const name = card.querySelector(".card-title").textContent;
         const desc = card.querySelector(".card-text").textContent;
         const price = card.querySelector(".text-danger").textContent;
+        
+        const design= document.getElementById("user_image");
+        const text= document.getElementById("user_text");
 
         content.innerHTML = `
         <div style="text-align: center;">
@@ -259,6 +262,21 @@
         <select id="quantity" style="display: block; width: 100px; margin-bottom: 10px; padding: 5px;">
             ${[1, 2, 3, 4, 5].map(n => `<option value="${n}">${n}</option>`).join("")}
         </select>
+        
+          <div class="mb-3">
+            <label for="pngUpload" class="form-label">Upload PNG file:</label>
+            <input class="form-control" type="file" id="pngUpload" accept=".png" >
+          </div>
+
+          <div class="mb-3">
+            <img id="previewImage" src="${img}" alt="Preview" style="max-width: 100%; display: none;" name="user_image">
+          </div>
+
+          <div class="mb-3">
+            <label for="textInput" class="form-label">Your Text:</label>
+            <input type="text" class="form-control" id="textInput" placeholder="Enter your text here" name="user_text">
+          </div>
+        
         <p><strong>Price:</strong> ₹${price}</p>
         <button onclick="addToCart('${productId}', '${size}', ${price})" id="add-cart-btn" style="
             padding: 10px 20px;

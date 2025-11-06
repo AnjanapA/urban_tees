@@ -10,7 +10,7 @@ class EmailForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter email',
-                'style': 'background-color:black; color:white; border:2px solid red; '
+                'style': 'background-color:white; color:blue; border:2px solid blue; '
                          'border-radius:6px; padding:10px; width:100%;'
             }),
         }
@@ -19,7 +19,7 @@ class EmailForm(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Enter OTP',
-                'style': 'background-color:black; color:white; border:2px solid red; '
+                'style': 'background-color:white; color:blue; border:2px solid blue; '
                 'border-radius:6px; padding:10px; width:100%;'
         })
     )
@@ -32,13 +32,13 @@ class PasswordForm(forms.Form):
             'new_password': forms.PasswordInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter new password',
-                'style': 'background-color:black; color:white; border:2px solid red; '
+                'style': 'background-color:white; color:blue; border:2px solid blue; '
                          'border-radius:6px; padding:10px; width:100%;'
             }),
             're_password': forms.PasswordInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Re-enter new password',
-                'style': 'background-color:black; color:white; border:2px solid red; '
+                'style': 'background-color:white; color:blue; border:2px solid blue; '
                          'border-radius:6px; padding:10px; width:100%;'
             }),
 
