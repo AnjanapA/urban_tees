@@ -15,6 +15,9 @@ from django.contrib.auth import authenticate, login, logout
 from datetime import time
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.files.storage import FileSystemStorage
+
+
 # from django.contrib.sites.models import Site
 
 def custom_404_view(request, exception):
@@ -570,112 +573,137 @@ def cart_page(request):
     user = request.user
 
     if request.method == "POST":
-        
-        action = request.POST.get('action')
-        product_id = request.POST.get('id')
-
-        # price = request.POST.get('price')
-        # product_image=request.POST.get('product_image')
+        action = request.POST.get("action")
+        product_id = request.POST.get("id")
 
         if not product_id:
-            messages.success(request, "no matched items!")
+            messages.error(request, "No product ID provided.")
+            return redirect("cart_page")
 
-        if action == 'add':
+        if action == "add":
+            size = request.POST.get("size")
+            quantity = int(request.POST.get("quantity", 1))
             
-            size = request.POST.get('size')
-            quantity = request.POST.get('quantity')
 
-            user_text = request.POST.get('user_text')
-            design_file = request.FILES.get('user_image')
+            try:
+                product = Product.objects.get(id=product_id)
+            except Product.DoesNotExist:
+                messages.error(request, "Product not found.")
+                return redirect("cart_page")
 
-            user_content = True if design_file else False
-            user_design_path = None
-
-            if design_file:
-                try:
-                    os.makedirs(settings.UPLOAD_IMG, exist_ok=True)  
-
-                    upload_path = os.path.join(settings.UPLOAD_IMG, design_file.name)
-                    print(upload_path)
-
-                    with open(upload_path, 'wb+') as destination:
-                        for chunk in design_file.chunks():
-                            destination.write(chunk)
-
-                    user_design_path = f'uploads/{design_file.name}'
-                    print(user_design_path)
-                except Exception as e:
-                    print("Error while saving design:", e)
-
-            product = Product.objects.get(id=product_id)
-            existing = Cart.objects.filter(user_id=user.id, product_id=product_id, size=size).first()
-            if existing:
-                existing.quantity += int(quantity)
-                existing.save()
+            cart_item, created = Cart.objects.get_or_create(
+                user_id=user.id,
+                product_id=product_id,
+                size=size,
+                defaults={
+                    "product_name": product.item_name,
+                    "product_description":product.item_description,
+                    "product_price": product.new_price,
+                    "quantity": quantity,
+                    "product_image": product.item_image1,
+                  
+                }
+            )
+            print(size)
+            cart_item.save()
+            if not created:
+                cart_item.quantity += quantity
+                # if user_text:
+                #     cart_item.user_text = user_text
+                # if user_image:
+                #     cart_item.user_image = user_image  
+                # cart_item.user_content = bool(cart_item.user_text or cart_item.user_image)
+                cart_item.save()
+                messages.success(request, f"Updated {product.item_name} in your cart.")
             else:
-                Cart.objects.create(
+                messages.success(request, f"Added {product.item_name} to your cart.")
+
+            cart_items = Cart.objects.filter(user_id=user.id)
+            return render(request, "cart_page.html", {"cart_items": cart_items})
+
+        elif action == "remove":
+            size = request.POST.get("size")
+            Cart.objects.filter(user_id=user.id, product_id=product_id,size=size).delete()
+            messages.success(request, "Product removed from your cart.")
+            cart_items = Cart.objects.filter(user_id=user.id)
+            return render(request, "cart_page.html", {"cart_items": cart_items})
+        elif action == "update":
+            size = request.POST.get("size")
+
+            user_content = request.POST.get("user_content")
+            user_image=""
+            user_text=""
+            content=0
+            if user_content=='text':
+                user_text = request.POST.get("user_text")
+            else:
+                content=1
+                user_image = request.FILES.get("user_image") 
+                cart_item= Cart.objects.filter(
                     user_id=user.id,
                     product_id=product_id,
-                    product_name=product.item_name,
-                    product_price=product.new_price,
-                    quantity=quantity,
-                    size=size,
-                    product_image=product.item_image1,
-                    user_content=user_content,
-                    user_image=user_design_path if user_design_path else None,
-                    user_text=user_text if user_text else '',
-                )
-            return JsonResponse({'status': 'success'})
-        elif action == 'remove':
-            Cart.objects.filter(user_id=user.id, product_id=product_id).delete()
-            # messages.success(request, "Product removed from your cart!")
-            # return JsonResponse({'status': 'success'})
+                    size=size).update(user_text = user_text,user_image = user_image,user_content = content)
+                file_path=os.path.join(settings.MEDIA_ROOT,user_image.name)
+
+                with open(file_path,'wb+') as destination:
+                    for chunk in user_image.chunks():
+                        destination.write(chunk)
             cart_items = Cart.objects.filter(user_id=user.id)
-            return render(request, 'cart_page.html', {'cart_items': cart_items})
+            return render(request, "cart_page.html", {"cart_items": cart_items})
+        
 
-            # return render(request,'cart_page.html')
+            
 
-        return JsonResponse({'status': 'error', 'message': 'Invalid action'})
+        messages.error(request, "Invalid action.")
+        return redirect("cart_page")
+
     cart_items = Cart.objects.filter(user_id=user.id)
-    print(cart_items)
-    return render(request, 'cart_page.html', {'cart_items': cart_items})
+    return render(request, "cart_page.html", {"cart_items": cart_items})
+
+
 
 def user_payment(request):
     user = request.user
 
-    quantity=request.POST.get('quantity')
-    product_price=request.get('product_price')
-    total_amount=quantity*product_price
-    total_discount=quantity*total_discount
-
     if request.method == "POST":
         product_id = request.POST.get('id')
-        cart = Product.objects.get(id=product_id)
-        Cart.objects.create(
-            product_id=product_id,
-            product_price=cart.new_price,
-            quantity = cart.quantity,
+        quantity = int(request.POST.get('quantity'))
+        
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            messages.success(request, "Product not found!")
+        product_price = float(product.new_price)
+        total_amount = quantity * product_price
+
+        total_discount = product.discount_price * quantity 
+
+        cart = Cart.objects.create(
+            user=user,
+            product=product,
+            product_price=product_price,
+            quantity=quantity,
             total_amount=total_amount,
             total_discount=total_discount
         )
 
-        user_content=request.POST.get('user_content')
-        user_image=request.POST.get('user_image')
-        user_text=request.POST.get('user_text')
-        if user_content==True:
-            user_image.save()
-        user_text.save()
+        user_content = request.POST.get('user_content')
+        user_image = request.FILES.get('user_image') 
+        user_text = request.POST.get('user_text')
+
         Order.objects.create(
+            user=user,
+            cart=cart,
             user_content=user_content,
             user_image=user_image,
             user_text=user_text
         )
-        return render(request, 'user_payment.html',{'order_items':order_items})
 
-    order_items = Cart.objects.filter(user_id=user.id)
+        order_items = Cart.objects.filter(user=user)
+        return render(request, 'user_payment.html', {'order_items': order_items})
 
-    return render(request, 'cart_page.html',{'order_items':order_items})
-
+    order_items = Cart.objects.filter(user=user)
+    return render(request, 'cart_page.html', {'order_items': order_items})
 
 #@login_required
 def user_orders(request):

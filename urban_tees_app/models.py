@@ -106,15 +106,20 @@ class Cart(models.Model):
     user_id=models.CharField(max_length=255)
     product_id=models.CharField(max_length=255)
     product_name=models.CharField(max_length=255)
+    product_description=models.CharField(max_length=255,blank=True)
     product_price=models.IntegerField()
     quantity = models.IntegerField()
     size = models.CharField(max_length=10, choices=SIZE)
     oreder_item = models.ForeignKey('Oreder_item', on_delete=models.CASCADE,null=True) 
     product_image=models.CharField(max_length=255,null=True)
-    user_content=models.BooleanField(default=False)
-    user_image= models.ImageField(upload_to='images/',null=True)
-    user_text=models.CharField(max_length=15,null=True)
-    
+    user_content = models.BooleanField(default=False)
+    user_image = models.ImageField(upload_to='uploads/', null=True, blank=True)
+    user_text = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.product_name} ({self.size}) x {self.quantity}" 
+
+
 class Oreder_item(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE) 
 

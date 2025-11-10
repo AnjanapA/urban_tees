@@ -49,6 +49,7 @@ class CartAdmin(admin.ModelAdmin):
     'user_id',
     'product_id',
     'product_name',
+    'product_description',
     'product_price',
     'quantity',
     'size',
