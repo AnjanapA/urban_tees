@@ -55,8 +55,8 @@ path('user_order_review/<int:id>/', views.user_order_review, name='user_order_re
 
 path('cart_payment/<str:product_id>/', views.cart_payment, name='cart_payment'),
 
-path('user_payment/', views.user_payment, name='user_payment'),
-path('user_payment/<int:id>/', views.user_payment, name='user_payment'),
+path('user_payment', views.user_payment, name='user_payment'),
+path('user_payment/<int:order_id>/', views.user_payment, name='user_payment'),
 path('myorder_page', views.myorder_page, name='myorder_page'),
 
 path('popup', views.popup, name='popup'),

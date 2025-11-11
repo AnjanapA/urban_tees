@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product,User,Cart
+from .models import Product,User,Order
 
 # Register your models here.
 class ProductAdmin(admin.ModelAdmin):
@@ -19,9 +19,6 @@ class ProductAdmin(admin.ModelAdmin):
     'medium_size',
     'large_size',
     'extralarge_size',
-    # 'wishlist'
-
-
     )
 admin.site.register(Product,ProductAdmin)
 
@@ -43,20 +40,18 @@ class UserAdmin(admin.ModelAdmin):
 admin.site.register(User,UserAdmin)
 
 
-class CartAdmin(admin.ModelAdmin):
+class OrderAdmin(admin.ModelAdmin):
 
-    list_display =(
-    'user_id',
-    'product_id',
-    'product_name',
-    'product_description',
-    'product_price',
-    'quantity',
-    'size',
-    'oreder_item',
-    'product_image',
-    'user_content',
-    'user_image',
-    'user_text',
+    list_display = (
+        'order_code',
+        'user',
+        'product',
+        'quantity',
+        'size',
+        'payment_method',
+        'payment_status',
+        'order_status',
+        'total_amount',
+        'total_discount',
     )
-admin.site.register(Cart,CartAdmin)
+admin.site.register(Order,OrderAdmin)

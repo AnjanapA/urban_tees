@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse
 from django.template import loader
 from django.conf import settings
-from .models import Product,User,Order,Wishlist,Cart
+from .models import Product,User,Wishlist,Order
 import os
 from .forms import LoginForm,RegisterForm,UserInfoForm,SendOTPForm,VerifyOTPForm,EmailForm,PasswordForm
 from django.contrib import messages
@@ -16,8 +16,8 @@ from datetime import time
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
-
-
+import uuid
+import razorpay
 # from django.contrib.sites.models import Site
 
 def custom_404_view(request, exception):
@@ -583,7 +583,6 @@ def cart_page(request):
         if action == "add":
             size = request.POST.get("size")
             quantity = int(request.POST.get("quantity", 1))
-            
 
             try:
                 product = Product.objects.get(id=product_id)
@@ -591,119 +590,110 @@ def cart_page(request):
                 messages.error(request, "Product not found.")
                 return redirect("cart_page")
 
-            cart_item, created = Cart.objects.get_or_create(
-                user_id=user.id,
-                product_id=product_id,
-                size=size,
-                defaults={
-                    "product_name": product.item_name,
-                    "product_description":product.item_description,
-                    "product_price": product.new_price,
-                    "quantity": quantity,
-                    "product_image": product.item_image1,
-                  
-                }
-            )
-            print(size)
-            cart_item.save()
-            if not created:
-                cart_item.quantity += quantity
-                # if user_text:
-                #     cart_item.user_text = user_text
-                # if user_image:
-                #     cart_item.user_image = user_image  
-                # cart_item.user_content = bool(cart_item.user_text or cart_item.user_image)
-                cart_item.save()
-                messages.success(request, f"Updated {product.item_name} in your cart.")
-            else:
-                messages.success(request, f"Added {product.item_name} to your cart.")
+            order_code = f"ORD-{uuid.uuid4().hex[:8].upper()}"
 
-            cart_items = Cart.objects.filter(user_id=user.id)
-            return render(request, "cart_page.html", {"cart_items": cart_items})
+            order, created = Order.objects.get_or_create(
+                user=user,
+                product=product,
+                size=size,
+                order_status="pending", 
+                defaults={
+                    "quantity": quantity,
+                    "order_code": order_code,
+                    "payment_method": "cash_on_delivery",
+                    "payment_status": "unpaid",
+                    "net_amount": product.new_price * quantity,
+                    "total_amount": product.new_price * quantity,
+                    "total_discount": 0,
+                },
+            )
+
+            if not created:
+                order.quantity += quantity
+                order.net_amount = product.new_price * order.quantity
+                order.total_amount = order.net_amount
+                order.save()
+                messages.success(request, f"Updated quantity for {product.name}.")
+            else:
+                messages.success(request, f"Added {product.name} to your cart.")
+
+            orders = Order.objects.filter(user=user, order_status="pending")
+            return render(request, "cart_page.html", {"orders": orders})
 
         elif action == "remove":
             size = request.POST.get("size")
-            Cart.objects.filter(user_id=user.id, product_id=product_id,size=size).delete()
+            Order.objects.filter(user=user, product_id=product_id, size=size, order_status="pending").delete()
             messages.success(request, "Product removed from your cart.")
-            cart_items = Cart.objects.filter(user_id=user.id)
-            return render(request, "cart_page.html", {"cart_items": cart_items})
+            orders = Order.objects.filter(user=user, order_status="pending")
+            return render(request, "cart_page.html", {"orders": orders})
+
         elif action == "update":
             size = request.POST.get("size")
-
             user_content = request.POST.get("user_content")
-            user_image=""
-            user_text=""
-            content=0
-            if user_content=='text':
-                user_text = request.POST.get("user_text")
+            user_image = None
+            user_text = ""
+
+            if user_content == "text":
+                user_text = request.POST.get("user_text", "")
             else:
-                content=1
-                user_image = request.FILES.get("user_image") 
-                cart_item= Cart.objects.filter(
-                    user_id=user.id,
-                    product_id=product_id,
-                    size=size).update(user_text = user_text,user_image = user_image,user_content = content)
-                file_path=os.path.join(settings.MEDIA_ROOT,user_image.name)
+                user_image = request.FILES.get("user_image")
+                if user_image:
+                    file_path = os.path.join(settings.MEDIA_ROOT, user_image.name)
+                    with open(file_path, "wb+") as destination:
+                        for chunk in user_image.chunks():
+                            destination.write(chunk)
 
-                with open(file_path,'wb+') as destination:
-                    for chunk in user_image.chunks():
-                        destination.write(chunk)
-            cart_items = Cart.objects.filter(user_id=user.id)
-            return render(request, "cart_page.html", {"cart_items": cart_items})
-        
+            Order.objects.filter(
+                user=user,
+                product_id=product_id,
+                size=size,
+                order_status="pending"
+            ).update(user_text=user_text, user_image=user_image)
 
-            
+            messages.success(request, "Customization updated.")
+            orders = Order.objects.filter(user=user, order_status="pending")
+            return render(request, "cart_page.html", {"orders": orders})
 
         messages.error(request, "Invalid action.")
         return redirect("cart_page")
 
-    cart_items = Cart.objects.filter(user_id=user.id)
-    return render(request, "cart_page.html", {"cart_items": cart_items})
+    orders = Order.objects.filter(user=user, order_status="pending")
+    return render(request, "cart_page.html", {"orders": orders})
+
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 
-
-def user_payment(request):
+def user_payment(request, order_id=None):
     user = request.user
 
-    if request.method == "POST":
-        product_id = request.POST.get('id')
-        quantity = int(request.POST.get('quantity'))
-        
-        try:
-            product = Product.objects.get(id=product_id)
-        except Product.DoesNotExist:
-            messages.success(request, "Product not found!")
-        product_price = float(product.new_price)
-        total_amount = quantity * product_price
+    if order_id:
+        orders = Order.objects.filter(user=user, id=order_id, order_status="pending")
+    else:
+        orders = Order.objects.filter(user=user, order_status="pending")
 
-        total_discount = product.discount_price * quantity 
+    if not orders.exists():
+        messages.error(request, "No items to pay for.")
+        return redirect("cart_page")
 
-        cart = Cart.objects.create(
-            user=user,
-            product=product,
-            product_price=product_price,
-            quantity=quantity,
-            total_amount=total_amount,
-            total_discount=total_discount
-        )
+    total_amount = sum([order.total_amount or order.net_amount for order in orders])
+    total_amount_in_paise = total_amount * 100 
 
-        user_content = request.POST.get('user_content')
-        user_image = request.FILES.get('user_image') 
-        user_text = request.POST.get('user_text')
+    razorpay_order = client.order.create({
+        "amount": total_amount_in_paise,
+        "currency": "INR",
+        "payment_capture": "1"
+    })
 
-        Order.objects.create(
-            user=user,
-            cart=cart,
-            user_content=user_content,
-            user_image=user_image,
-            user_text=user_text
-        )
+    context = {
+        "orders": orders,
+        "razorpay_order_id": razorpay_order["id"],
+        "razorpay_merchant_key": settings.RAZORPAY_KEY_ID,
+        "total_amount": total_amount,
+        "currency": "INR",
+        "callback_url": "/paymenthandler/",
+    }
 
-        order_items = Cart.objects.filter(user=user)
-        return render(request, 'user_payment.html', {'order_items': order_items})
-
-    order_items = Cart.objects.filter(user=user)
-    return render(request, 'cart_page.html', {'order_items': order_items})
+    return render(request, "user_payment.html", context)
 
 #@login_required
 def user_orders(request):
@@ -714,5 +704,3 @@ def popup(request):
     return render(request, 'popup.html')    
 
 
-def otp_time():
-    now=time.now()

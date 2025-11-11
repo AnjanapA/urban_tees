@@ -1,46 +1,36 @@
 {% extends 'user_layout.html' %}
 {% load static %}
+{% load price_details %}
 
 {% block content %}
 <div class="container mt-4">
-    {% if cart_items %}
+    {% if orders %}
     <div class="row g-3">
-        {% for cart in cart_items %}
+        {% for cart in orders %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
             <div class="card w-100 position-relative">
 
-                <!-- {% if cart.user_image %} -->
-                <!-- <img src="{{ cart.user_image.url }}" class="card-img-top" alt="{{ cart.product_name }}"
-                    style="max-height: 200px; object-fit: contain;">
-                {% else %} -->
-                <!-- {% endif %} -->
-                
                 <div class="card-body">
-                    <img src="{% static cart.product_image %}" class="card-img-top" alt="{{ cart.product_name }}"
-                        style="max-height: 200px; object-fit: contain;">
-                    <h5 class="card-title" name="product_name">{{ cart.product_name }}</h5>
-                    <p class="card-text" name="product_description">{{ cart.product_description }}</p>
+                    <img src="{% static cart.product.item_image1 %}" class="card-img-top" alt="{{ order.product.item_name }}"
+                            style="max-height: 200px; object-fit: contain;">
+                    <h5 class="card-title">{{ cart.product.item_name }}</h5>
+                    <p class="card-text">{{ cart.product.item_description }}</p>
+                    
                     <div class="row">
                         <div class="col-6">
-
-                            <p class="card-text" name="quantity">Quantity: {{ cart.quantity }}</p>
+                            <p class="card-text">Quantity: {{ cart.quantity }}</p>
                         </div>
                         <div class="col-6">
-                            <p class="card-text" name="size">Size: {{ cart.size }}</p>
-
+                            <p class="card-text">Size: {{ cart.size }}</p>
                         </div>
 
                     </div>
-                    <!-- <div class="mb-2">
-                        <label for="size{{ cart.id }}" class="form-label" value="{{ cart.size }}">Select Size:</label>
-                        <select name="size" id="size{{ cart.id }}" class="form-control" required>
-                            <option value="small" {% if cart.size == "small" %}selected{% endif %}>Small</option>
-                            <option value="medium" {% if cart.size == "medium" %}selected{% endif %}>Medium</option>
-                            <option value="large" {% if cart.size == "large" %}selected{% endif %}>Large</option>
-                            <option value="extralarge" {% if cart.size == "extralarge" %}selected{% endif %}>Extra Large
-                            </option>
-                        </select>
-                    </div> -->
+                    <div class="row">
+                        <a href="{% url 'user_payment' cart.id %}" class="btn btn-outline-primary w-100 mt-2">
+                            Buy Now
+                        </a>
+                    </div>
+
                     {% if cart.user_text %}
                     <p class="card-text">Your Text: {{ cart.user_text }}</p>
                     {% endif %}
@@ -50,29 +40,26 @@
                     <!-- Update form -->
                     <form method="post" enctype="multipart/form-data" action="{% url 'cart_page' %}">
                         {% csrf_token %}
-                        <input type="hidden" name="id" value="{{ cart.product_id }}">
-
+                        <input type="hidden" name="id" value="{{ cart.product.id }}">
                         <input type="hidden" name="size" value="{{ cart.size }}">
-
-                        
                         <input type="hidden" name="action" value="update">
 
-                        {% if "text" in cart.product_description %}
+                        {% if "text" in cart.product.item_description %}
                         <div class="mb-2">
                             <input type="hidden" name="user_content" value="text">
                             <label for="userText{{ cart.id }}" class="form-label">Your Text:</label>
                             <input type="text" name="user_text" id="userText{{ cart.id }}" class="form-control"
-                            placeholder="Enter your text" value="{{ cart.user_text }}">
+                                   placeholder="Enter your text" value="{{ cart.user_text }}">
                         </div>
-                        {% elif "design" in cart.product_description %}
+                        {% elif "design" in cart.product.item_description %}
                         <div class="mb-2">
                             <input type="hidden" name="user_content" value="image">
                             <label for="userImage{{ cart.id }}" class="form-label">Upload Design:</label>
                             <input type="file" name="user_image" id="userImage{{ cart.id }}" class="form-control"
-                            accept=".png,.jpg,.jpeg">
+                                   accept=".png,.jpg,.jpeg">
                             {% if cart.user_image %}
-                            <img src="{{ cart.user_image.url }}"  class="file-preview-chip " alt="{{ cart.product_name }}"
-                                style="max-height: 200px; object-fit: contain;">
+                            <img src="{{ cart.user_image.url }}" class="file-preview-chip" alt="{{ cart.product.name }}"
+                                 style="max-height: 200px; object-fit: contain;">
                             {% else %}
                             <img src="" class="card-img-top" alt=""
                                 style="max-height: 200px; object-fit: contain;" aria-hidden="">
@@ -86,7 +73,7 @@
                     <!-- Remove form -->
                     <form method="post" action="{% url 'cart_page' %}" class="w-100 mt-2 text-center">
                         {% csrf_token %}
-                        <input type="hidden" name="id" value="{{ cart.product_id }}">
+                        <input type="hidden" name="id" value="{{ cart.product.id }}">
                         <input type="hidden" name="size" value="{{ cart.size }}">
                         <input type="hidden" name="action" value="remove">
                         <button type="submit" class="btn btn-outline-danger w-100">Remove from Cart</button>
@@ -100,5 +87,45 @@
     {% else %}
     <p class="text-center">You haven't added any products to your cart yet.</p>
     {% endif %}
+</div>
+
+<div class="container mt-4 bg-white rounded p-3 shadow-sm">
+    <div class="row fw-bold mb-0">
+        Price Details
+    </div>
+    <hr class="my-3 border border-dark">
+
+    <div class="row">
+        <div class="col-8">
+            Net Amount
+        </div>
+        <div class="col-4">
+            {% net_price orders %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8">
+            Total Discount
+        </div>
+        <div class="col-4">
+            {% discount_price orders %}
+        </div>
+    </div>
+
+    <hr class="my-3 border border-dark">
+
+    <div class="row">
+        <div class="col-8 fw-bold mb-0">
+            Total Amount
+        </div>
+        <div class="col-4">
+            {% total_price orders %}
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <a href="{% url 'user_payment' %}" class="fw-bold mb-0 btn bg-danger text-black">Place Order</a>
+    </div>
 </div>
 {% endblock %}

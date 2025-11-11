@@ -95,56 +95,39 @@ class Wishlist(models.Model):
     def __str__(self):
         return f"{self.user.username} -> {self.product.item_name}"
 
-class Cart(models.Model):
-    
-    SIZE=[
-        ('small','Small'),
-        ('medium','Medium'),
-        ('large','Large'),
-        ('extralarge','Extralarge'),
-    ]
-    user_id=models.CharField(max_length=255)
-    product_id=models.CharField(max_length=255)
-    product_name=models.CharField(max_length=255)
-    product_description=models.CharField(max_length=255,blank=True)
-    product_price=models.IntegerField()
-    quantity = models.IntegerField()
-    size = models.CharField(max_length=10, choices=SIZE)
-    oreder_item = models.ForeignKey('Oreder_item', on_delete=models.CASCADE,null=True) 
-    product_image=models.CharField(max_length=255,null=True)
-    user_content = models.BooleanField(default=False)
-    user_image = models.ImageField(upload_to='uploads/', null=True, blank=True)
-    user_text = models.CharField(max_length=255, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.product_name} ({self.size}) x {self.quantity}" 
-
-
-class Oreder_item(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE) 
-
-    product = models.ForeignKey('Product', on_delete=models.SET_NULL,null=True)
-    quantity = models.IntegerField()
 
 
 class Order(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE) 
+    user = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+        related_name='orders'  # all orders belonging to this user
+    )
 
-    product = models.ForeignKey('Product', on_delete=models.SET_NULL,null=True)
-    product_name = models.CharField(max_length=100)
+    product = models.ForeignKey(
+        'Product',
+        on_delete=models.SET_NULL,
+        related_name='orders',  # all orders that include this product
+        null=True
+    )
 
-    SIZE_CHOICES = [
+    SIZE = [
         ('small', 'Small'),
         ('medium', 'Medium'),
         ('large', 'Large'),
-        ('extra_large', 'Extra Large'),
+        ('extralarge', 'Extra Large'),
     ]
-    size = models.CharField(max_length=20, choices=SIZE_CHOICES)
+    size = models.CharField(max_length=10, choices=SIZE)
+    quantity = models.IntegerField()
 
-    order_no = models.IntegerField()
-    order_id = models.CharField(max_length=50)
-    total_amount = models.IntegerField()
-    total_discount = models.IntegerField()
+    user_image = models.ImageField(upload_to='uploads/', null=True, blank=True)
+    user_text = models.CharField(max_length=255, null=True, blank=True)
+
+    net_amount = models.IntegerField(null=True)
+    total_amount = models.IntegerField(null=True)
+    total_discount = models.IntegerField(null=True)
+
+    order_code = models.CharField(max_length=50)
 
     PAYMENT_METHOD_CHOICES = [
         ('cash_on_delivery', 'Cash on Delivery'),
@@ -168,8 +151,6 @@ class Order(models.Model):
     ]
     order_status = models.CharField(max_length=15, choices=ORDER_STATUS_CHOICES)
 
-
-
     def __str__(self):
-        return f"Order {self.order_no} - {self.product_name}"
-
+        product_name = self.product.name if self.product else "No Product"
+        return f"Order {self.order_code} - {product_name}"
