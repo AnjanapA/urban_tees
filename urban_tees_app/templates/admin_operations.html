@@ -39,8 +39,8 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark nav-item">
                             <li><a class=" dropdown-item nav-link text-white"
-                                    href="{% url 'admin_add_layout' %}">Add</a></li>
-                            <li><a class="dropdown-item nav-link text-white" href="{% url 'admin_view_layout' %}">View
+                                    href="{% url 'admin_add_product' %}">Add</a></li>
+                            <li><a class="dropdown-item nav-link text-white" href="{% url 'admin_view_product' %}">View
                                     Product</a></li>
                         </ul>
                     </li>
@@ -49,7 +49,7 @@
                         <a class="nav-link text-white" href="#">Offer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Order</a>
+                        <a class="nav-link text-white" href="{% url 'admin_orderlist' %}">Order</a>
                     </li>
                 </ul>
             </div>

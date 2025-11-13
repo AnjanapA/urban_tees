@@ -1,6 +1,5 @@
 {% extends 'user_layout.html' %}
 {% load static %}
-{% load price_details %}
 
 {% block content %}
 <div class="container mt-4">
@@ -11,11 +10,11 @@
             <div class="card w-100 position-relative">
 
                 <div class="card-body">
-                    <img src="{% static cart.product.item_image1 %}" class="card-img-top" alt="{{ order.product.item_name }}"
-                            style="max-height: 200px; object-fit: contain;">
+                    <img src="{% static cart.product.item_image1 %}" class="card-img-top"
+                        alt="{{ order.product.item_name }}" style="max-height: 200px; object-fit: contain;">
                     <h5 class="card-title">{{ cart.product.item_name }}</h5>
                     <p class="card-text">{{ cart.product.item_description }}</p>
-                    
+
                     <div class="row">
                         <div class="col-6">
                             <p class="card-text">Quantity: {{ cart.quantity }}</p>
@@ -49,20 +48,20 @@
                             <input type="hidden" name="user_content" value="text">
                             <label for="userText{{ cart.id }}" class="form-label">Your Text:</label>
                             <input type="text" name="user_text" id="userText{{ cart.id }}" class="form-control"
-                                   placeholder="Enter your text" value="{{ cart.user_text }}">
+                                placeholder="Enter your text" value="{{ cart.user_text }}">
                         </div>
                         {% elif "design" in cart.product.item_description %}
                         <div class="mb-2">
                             <input type="hidden" name="user_content" value="image">
                             <label for="userImage{{ cart.id }}" class="form-label">Upload Design:</label>
                             <input type="file" name="user_image" id="userImage{{ cart.id }}" class="form-control"
-                                   accept=".png,.jpg,.jpeg">
+                                accept=".png,.jpg,.jpeg">
                             {% if cart.user_image %}
                             <img src="{{ cart.user_image.url }}" class="file-preview-chip" alt="{{ cart.product.name }}"
-                                 style="max-height: 200px; object-fit: contain;">
+                                style="max-height: 200px; object-fit: contain;">
                             {% else %}
-                            <img src="" class="card-img-top" alt=""
-                                style="max-height: 200px; object-fit: contain;" aria-hidden="">
+                            <img src="" class="card-img-top" alt="" style="max-height: 200px; object-fit: contain;"
+                                aria-hidden="">
                             {% endif %}
                         </div>
                         {% endif %}
@@ -95,34 +94,7 @@
     </div>
     <hr class="my-3 border border-dark">
 
-    <div class="row">
-        <div class="col-8">
-            Net Amount
-        </div>
-        <div class="col-4">
-            {% net_price orders %}
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-8">
-            Total Discount
-        </div>
-        <div class="col-4">
-            {% discount_price orders %}
-        </div>
-    </div>
-
-    <hr class="my-3 border border-dark">
-
-    <div class="row">
-        <div class="col-8 fw-bold mb-0">
-            Total Amount
-        </div>
-        <div class="col-4">
-            {% total_price orders %}
-        </div>
-    </div>
+    {% include 'payment_summary.html' %}
 
     <div class="row mt-2">
         <a href="{% url 'user_payment' %}" class="fw-bold mb-0 btn bg-danger text-black">Place Order</a>

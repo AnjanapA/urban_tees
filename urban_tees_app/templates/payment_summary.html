@@ -1,0 +1,35 @@
+{% load price_details %}
+
+
+<div class="fw-bold">
+
+    <div class="row">
+        <div class="col-8">
+            Net Amount
+        </div>
+        <div class="col-4 text-danger">
+         +  ₹ {% net_price orders %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8">
+            Total Discount
+        </div>
+        <div class="col-4 text-success">
+          - ₹ {% discount_price orders %}
+        </div>
+    </div>
+
+    <hr class="my-3 border border-dark">
+
+    <div class="row">
+        <div class="col-8 mb-0">
+            Total Amount
+        </div>
+        <div class="col-4  text-danger">
+         +  ₹ {% total_price orders %}
+        </div>
+    </div>
+
+</div>

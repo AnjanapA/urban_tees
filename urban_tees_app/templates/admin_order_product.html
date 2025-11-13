@@ -1,37 +1,48 @@
 {% extends 'admin_layout.html' %}
-{% block content %}
-
 {% load static %}
-<div class="container">
-    <div class="row">
-        <div class="col-sm-8">
-            <div class="row">
-                <div class="col-md-3 text-center">
-                    <img src="{% static item.item_image1 %}" class="d-block w-100" alt="Image 1"
-                        style="height: auto; max-height: 200px; object-fit: contain;">
-                </div>
-                <div class="col-md-5 text-center">
-                    <h2 class="mb-3">{{ item.item_name }}</h2>
 
-                    <p>{{ item.item_description }}</p>
-                    <p>{{ item.item_size }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <h3>Order Summery</h3>
-                <label for="">Total Amount</label>
-                inpu
+{% block content %}
+<div class="container my-4">
+    <h2>Order Detail - {{ order.order_code }}</h2>
+    <div class="row">
+        <!-- Left Side: Product Details -->
+        <div class="col-md-6">
+            <div class="card mb-3 p-3 shadow-sm">
+                <h4>Product Details</h4>
+                <img src="{% static order.product.item_image1 %}" class="img-fluid rounded mb-2" alt="{{ order.product.item_name }}">
+                <p><strong>Name:</strong> {{ order.product.item_name }}</p>
+                <p><strong>Description:</strong> {{ order.product.item_description }}</p>
+                <p><strong>Category:</strong> {{ order.product.get_category_display }}</p>
+                <p><strong>Price:</strong> ₹ {{ order.product.old_price }}</p>
+                <p><strong>Offer:</strong> {{ order.product.offer }}%</p>
+                <p><strong>Discounted Price:</strong> ₹ {{ order.total_amount }}</p>
             </div>
         </div>
-        <div class="col-sm-4">
 
-            <div class="card shadow">
+        <!-- Right Side: User Details -->
+        <div class="col-md-6">
+            <div class="card mb-3 p-3 shadow-sm">
+                <h4>User Details</h4>
+                <p><strong>Name:</strong> {{ order.user.user_name }}</p>
+                <p><strong>Email:</strong> {{ order.user.email }}</p>
+                <p><strong>Phone:</strong> {{ order.user.phone }}</p>
+                <p><strong>Address:</strong> {{ order.user.address }}, {{ order.user.place }}, {{ order.user.city }} - {{ order.user.pincode }}</p>
             </div>
         </div>
     </div>
+
+    <!-- Bottom: Order & Payment Details -->
+    <div class="card mb-3 p-3 shadow-sm">
+        <h4>Order & Payment Details</h4>
+        <p><strong>Order Code:</strong> {{ order.order_code }}</p>
+        <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+        <p><strong>Size:</strong> {{ order.size|title }}</p>
+        <p><strong>Net Amount:</strong> ₹ {{ order.net_amount }}</p>
+        <p><strong>Total Discount:</strong> ₹ {{ order.total_discount }}</p>
+        <p><strong>Total Amount:</strong> ₹ {{ order.total_amount }}</p>
+        <p><strong>Payment Status:</strong> {{ order.payment_status|title }}</p>
+        <p><strong>Payment Method:</strong> {{ order.payment_method|title|replace:"_"," " }}</p>
+        <p><strong>Order Status:</strong> {{ order.order_status|title }}</p>
+    </div>
 </div>
-
-<script>
-
-</script>
 {% endblock %}

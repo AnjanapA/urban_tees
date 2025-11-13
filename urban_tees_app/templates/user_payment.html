@@ -1,43 +1,147 @@
 {% extends 'user_layout.html' %}
 {% load static %}
+{% load price_details %}
 
 {% block content %}
 <div class="container py-5">
+
     <h4 class="mb-4">Payment Summary</h4>
 
-    <div class="row bg-white p-4 shadow rounded mb-3">
-        {% for order in orders %}
-        <div class="col-12 mb-2">
-            <p>{{ order.product.name }} ({{ order.size }}) × {{ order.quantity }}</p>
-            <p>Price: ₹{{ order.net_amount }} | Discount: ₹{{ order.total_discount }} | Total: ₹{{ order.total_amount }}</p>
+    <!-- ORDER LIST -->
+    {% for order in orders %}
+    <div class="row bg-white p-4 shadow rounded mb-3 align-items-center">
+        <div class="col-md-5">
+            <img src="{% static order.product.item_image1 %}" class="img-fluid" alt="{{ order.product.item_name }}"
+                style="max-height: 200px; object-fit: contain;">
         </div>
-        {% endfor %}
-    </div>
-
-    <div class="row bg-white p-4 shadow rounded mb-3">
-        <div class="col-8">
-            <h5>Total Amount</h5>
-        </div>
-        <div class="col-4">
-            <h5>₹{{ total_amount }}</h5>
+        <div class="col-md-7">
+            <p class="mb-1 fw-semibold">{{ order.product.item_name }} ({{ order.size }}) × {{ order.quantity }}</p>
+            <p class="mb-0 text-muted">
+                Price: ₹{% net_price orders %} | Discount: ₹{% discount_price orders %} |
+                Total: ₹{% total_price orders %}
+            </p>
         </div>
     </div>
+    {% endfor %}
 
-    <!-- Razorpay payment form -->
-    <form id="razorpay-form" method="POST" action="{{ callback_url }}">
+    <form method="POST">
         {% csrf_token %}
-        <script
-            src="https://checkout.razorpay.com/v1/checkout.js"
-            data-key="{{ razorpay_merchant_key }}"
-            data-amount="{{ total_amount|floatformat:2|floatformat:'0' }}00"
-            data-currency="{{ currency }}"
-            data-order_id="{{ razorpay_order_id }}"
-            data-buttontext="Pay Now"
-            data-name="MyShop"
-            data-description="Order Payment"
-            data-theme.color="#F37254">
-        </script>
-        <input type="hidden" name="order_ids" value="{% for order in orders %}{{ order.id }},{% endfor %}">
+        <div class="card p-4 shadow-sm mt-4">
+            <h5 class="mb-3">Select Payment Method</h5>
+
+            <!-- Cash on Delivery -->
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="payment_method" id="cash" value="cash_on_delivery"
+                    onclick="showSection('cash_on_delivery_section')">
+                <label class="form-check-label" for="cash">Cash on Delivery</label>
+
+                <div id="cash_on_delivery_section" class="payment-section mt-4" style="display:none;">
+                    <div class="card p-4 shadow-sm text-center">
+                        <p>Pay the amount upon delivery of your order.</p>
+                        <button type="submit" class="btn btn-primary">Place Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Online Payment -->
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="payment_method" id="online" value="online_payment"
+                    onclick="showSection('online_payment_section')">
+                <label class="form-check-label" for="online">Online Payment (UPI / Razorpay)</label>
+
+                <div id="online_payment_section" class="payment-section mt-4" style="display:none;">
+                    <div class="card p-4 shadow-sm">
+                        <label for="upi" class="form-label">UPI ID</label>
+                        <input type="text" id="upi" name="upi_id" class="form-control mb-3"
+                            placeholder="Enter your UPI ID">
+                        <button type="submit" class="btn btn-success mt-2">Pay ₹{% total_price orders %}</button>
+
+                        <!-- Razorpay form -->
+                        <form id="razorpay-form" method="POST" action="{{ callback_url }}">
+                            {% csrf_token %}
+                            <script src="https://checkout.razorpay.com/v1/checkout.js"
+                                data-key="{{ razorpay_merchant_key }}" data-amount="{{ total_amount|floatformat:0 }}00"
+                                data-currency="{{ currency }}" data-order_id="{{ razorpay_order_id }}"
+                                data-buttontext="Pay Now" data-name="MyShop" data-description="Order Payment"
+                                data-theme.color="#F37254">
+                            </script>
+                            <input type="hidden" name="order_ids"
+                                value="{% for order in orders %}{{ order.id }},{% endfor %}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Payment -->
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment_method" id="card" value="card_payment"
+                    onclick="showSection('card_payment_section')">
+                <label class="form-check-label" for="card">Card Payment</label>
+
+                <div id="card_payment_section" class="payment-section mt-4" style="display:none;">
+                    <div class="card p-4 shadow-sm">
+                        <h6 class="mb-3">Card Details</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="card_number" class="form-label">Card Number</label>
+                                <input type="text" id="card_number" name="card_number" class="form-control"
+                                    maxlength="16" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="expiry" class="form-label">Valid Thru</label>
+                                <input type="month" id="expiry" name="expiry" class="form-control">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" id="cvv" name="cvv" class="form-control" maxlength="3">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success mt-2">Pay ₹{% total_price orders %}</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </form>
+
+    <div class="card p-4 shadow-sm mt-4">
+        {% include 'payment_summary.html' %}
+    </div>
+
 </div>
+
+<!-- Include jQuery & Toastr -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    // Show/hide payment sections
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.payment-section');
+        sections.forEach(sec => sec.style.display = 'none');
+        const active = document.getElementById(sectionId);
+        if (active) active.style.display = 'block';
+    }
+
+    // Show preselected section on page load
+    window.onload = function () {
+        const checkedRadio = document.querySelector('input[name="payment_method"]:checked');
+        if (checkedRadio) {
+            showSection(checkedRadio.value + '_section');
+        }
+    };
+
+{% if messages %}
+    {% for message in messages %}
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "timeOut": "3000"
+        };
+        toastr.success("{{ message|escapejs }}");
+    {% endfor %}
+{% endif %}</script>
+
 {% endblock %}

@@ -17,6 +17,9 @@ path('admin_edit/<int:id>',views.admin_edit,name='admin_edit'),
 path('admin_edit_product/<int:id>',views.admin_edit_product,name='admin_edit_product'),
 path('admin_delete_product/<int:id>',views.admin_delete_product,name='admin_delete_product'),
 
+path('admin_orderlist',views.admin_orderlist,name='admin_orderlist'),
+path('admin_order_product/<str:order_code>',views.admin_order_product,name='admin_order_product'),
+
 
 # user
 

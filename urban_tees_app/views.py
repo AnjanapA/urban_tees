@@ -216,6 +216,37 @@ def admin_delete_product(request, id):
     context=Product.objects.filter(id=id).delete()
     return redirect('admin_view_product')
 
+
+# here
+
+def admin_orderlist(request):
+    """Admin-only page listing all orders."""
+    # if request.user.role != 'admin':
+    #     return render(request, 'admin.html', status=403)
+
+    orders = Order.objects.select_related('user', 'product').all().order_by('-id')
+    return render(request, 'admin_orderlist.html', {'orders': orders})
+
+
+@login_required
+def admin_order_product(request, order_code):
+    """Admin-only page showing detailed order info."""
+    if request.user.role != 'admin':
+        return render(request, 'errors/403.html', status=403)
+
+    order = Order.objects.select_related('user', 'product').filter(order_code=order_code).first()
+    if not order:
+        return render(request, 'errors/404.html', status=404)
+
+    context = {
+        'order': order
+    }
+    return render(request, 'orders/admin_order_detail.html', context)
+
+
+
+
+
 # user
 def web_home(request):
     item_details = Product.objects.all()
@@ -660,12 +691,47 @@ def cart_page(request):
     orders = Order.objects.filter(user=user, order_status="pending")
     return render(request, "cart_page.html", {"orders": orders})
 
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+
+# def user_payment(request, order_id=None):
+#     # client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+#     user = request.user
+
+#     if order_id:
+#         orders = Order.objects.filter(user=user, id=order_id, order_status="pending")
+#     else:
+#         orders = Order.objects.filter(user=user, order_status="pending")
+
+#     if not orders.exists():
+#         messages.error(request, "No items to pay for.")
+#         return redirect("cart_page")
+
+#     total_amount = sum([order.total_amount or order.net_amount for order in orders])
+#     total_discount = sum(order.total_discount or 0 for order in orders) 
+        
+#     context = {
+#         "orders": orders,
+#         # "razorpay_order_id": razorpay_order["id"],
+#         # "razorpay_merchant_key": settings.RAZORPAY_KEY_ID,
+#         "total_amount": total_amount,
+#         "total_discount": total_discount,
+
+#         # "total_discount":total_discount,
+#         "currency": "INR",
+#         # "callback_url": "/paymenthandler/",
+#     }
+
+#     return render(request, "user_payment.html", context)
 
 
 def user_payment(request, order_id=None):
+    """
+    Handles payment for pending orders.
+    If user selects Cash on Delivery, marks order(s) as 'ordered' and shows a success message.
+    """
     user = request.user
 
+    # Get pending orders for the user
     if order_id:
         orders = Order.objects.filter(user=user, id=order_id, order_status="pending")
     else:
@@ -675,25 +741,37 @@ def user_payment(request, order_id=None):
         messages.error(request, "No items to pay for.")
         return redirect("cart_page")
 
-    total_amount = sum([order.total_amount or order.net_amount for order in orders])
-    total_amount_in_paise = total_amount * 100 
+    # Handle Cash on Delivery submission
+    if request.method == 'POST':
+        payment_method = request.POST.get('payment_method')
+        if payment_method == 'cash_on_delivery':
+            for order in orders:
+                order.order_status = "ordered"   # Mark as ordered
+                order.payment_method = "Cash on Delivery"
+                order.save()
+            
+            messages.success(request, "Order placed successfully!")
+            return redirect(reverse('user_payment'))  
+        # You can handle other payment methods here if needed (online/card)
+        # elif payment_method == 'online_payment':
+        #     pass
 
-    razorpay_order = client.order.create({
-        "amount": total_amount_in_paise,
-        "currency": "INR",
-        "payment_capture": "1"
-    })
+    # Calculate totals
+    total_amount = sum([order.total_amount or order.net_amount for order in orders])
+    total_discount = sum(order.total_discount or 0 for order in orders)
 
     context = {
         "orders": orders,
-        "razorpay_order_id": razorpay_order["id"],
-        "razorpay_merchant_key": settings.RAZORPAY_KEY_ID,
         "total_amount": total_amount,
+        "total_discount": total_discount,
         "currency": "INR",
-        "callback_url": "/paymenthandler/",
+        # Add Razorpay context if needed for online payment
+        # "razorpay_merchant_key": settings.RAZORPAY_KEY_ID,
+        # "callback_url": "/paymenthandler/",
     }
 
     return render(request, "user_payment.html", context)
+
 
 #@login_required
 def user_orders(request):
