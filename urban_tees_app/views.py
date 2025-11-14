@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
 import uuid
-import razorpay
+# import razorpay
 # from django.contrib.sites.models import Site
 
 def custom_404_view(request, exception):
