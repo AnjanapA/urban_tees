@@ -28,6 +28,32 @@ handler404 = 'urban_tees.urls.custom_404_view'
 def main(request):
     return render(request,'main.html')
 
+
+from django.shortcuts import render
+from .models import User, Order, Product
+
+def admin_dashboard(request):
+    # Count total users, orders, products
+    total_users = User.objects.count()
+    total_orders = Order.objects.count()
+    total_products = Product.objects.count()
+
+    # Get recent orders (last 5)
+    recent_orders = Order.objects.select_related('user', 'product').order_by('-id')[:5]
+
+    context = {
+        'total_users': total_users,
+        'total_orders': total_orders,
+        'total_products': total_products,
+        'recent_orders': recent_orders,
+    }
+
+    return render(request, 'admin_dashboard.html', context)
+
+
+
+
+
 def user_layout(request):
     return render(request,'user_layout.html')
 

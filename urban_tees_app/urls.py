@@ -7,6 +7,8 @@ path('main',views.main,name='main'),
 
 path('admin_operations',views.admin_operations,name='admin_operations'),
 
+path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
+
 path('image_preview',views.image_preview,name='image_preview'),
 
 path('admin_layout',views.admin_layout,name='admin_layout'),

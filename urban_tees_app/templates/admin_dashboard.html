@@ -1,0 +1,63 @@
+<!-- Main Content -->
+<div class="col-10 bg-danger text-white p-3">
+    <h4 class="mb-4">Dashboard</h4>
+
+    <div class="row g-3">
+        <!-- Total Users -->
+        <div class="col-md-4">
+            <div class="card text-white shadow-sm" style="background-color:#b71c1c;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text display-6">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="col-md-4">
+            <div class="card text-white shadow-sm" style="background-color:#c62828;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text display-6">{{ total_orders }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Products -->
+        <div class="col-md-4">
+            <div class="card text-white shadow-sm" style="background-color:#d32f2f;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Products</h5>
+                    <p class="card-text display-6">{{ total_products }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: Recent Orders Table -->
+    <div class="mt-4">
+        <h5>Recent Orders</h5>
+        <table class="table table-bordered table-hover text-center text-white" style="background-color:#b71c1c;">
+            <thead style="background-color:#d32f2f;">
+                <tr>
+                    <th>Order Code</th>
+                    <th>User</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>{{ order.order_code }}</td>
+                    <td>{{ order.user.user_name }}</td>
+                    <td>{{ order.product.item_name }}</td>
+                    <td>₹ {{ order.total_amount }}</td>
+                    <td>{{ order.order_status|title }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
