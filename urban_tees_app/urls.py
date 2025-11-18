@@ -20,6 +20,8 @@ path('admin_delete_product/<int:id>',views.admin_delete_product,name='admin_dele
 path('admin_orderlist',views.admin_orderlist,name='admin_orderlist'),
 path('admin_order_product/<str:order_code>',views.admin_order_product,name='admin_order_product'),
 
+path('orders/', views.admin_orderlist, name='admin_orderlist'),          
+path('order/<int:order_id>/', views.admin_order_page, name='admin_order_page'),
 
 # user
 
@@ -60,7 +62,10 @@ path('cart_payment/<str:product_id>/', views.cart_payment, name='cart_payment'),
 
 path('user_payment', views.user_payment, name='user_payment'),
 path('user_payment/<int:order_id>/', views.user_payment, name='user_payment'),
-path('myorder_page', views.myorder_page, name='myorder_page'),
+path('myorder_page', views.user_payment, name='myorder_page'),
+
+path("my-orders/", views.user_orders, name="user_myorder_page"),
+
 
 path('popup', views.popup, name='popup'),
 

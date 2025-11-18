@@ -9,7 +9,8 @@
         <div class="col-md-6">
             <div class="card mb-3 p-3 shadow-sm">
                 <h4>Product Details</h4>
-                <img src="{% static order.product.item_image1 %}" class="img-fluid rounded mb-2" alt="{{ order.product.item_name }}">
+                <img src="{% static order.product.item_image1 %}" class="img-fluid rounded mb-2 w-25"
+                    alt="{{ order.product.item_name }}">
                 <p><strong>Name:</strong> {{ order.product.item_name }}</p>
                 <p><strong>Description:</strong> {{ order.product.item_description }}</p>
                 <p><strong>Category:</strong> {{ order.product.get_category_display }}</p>
@@ -26,7 +27,8 @@
                 <p><strong>Name:</strong> {{ order.user.user_name }}</p>
                 <p><strong>Email:</strong> {{ order.user.email }}</p>
                 <p><strong>Phone:</strong> {{ order.user.phone }}</p>
-                <p><strong>Address:</strong> {{ order.user.address }}, {{ order.user.place }}, {{ order.user.city }} - {{ order.user.pincode }}</p>
+                <p><strong>Address:</strong> {{ order.user.address }}, {{ order.user.place }}, {{ order.user.city }} -
+                    {{ order.user.pincode }}</p>
             </div>
         </div>
     </div>
@@ -41,7 +43,7 @@
         <p><strong>Total Discount:</strong> ₹ {{ order.total_discount }}</p>
         <p><strong>Total Amount:</strong> ₹ {{ order.total_amount }}</p>
         <p><strong>Payment Status:</strong> {{ order.payment_status|title }}</p>
-        <p><strong>Payment Method:</strong> {{ order.payment_method|title|replace:"_"," " }}</p>
+        <p><strong>Payment Method:</strong> {{ order.payment_method|title }}</p>
         <p><strong>Order Status:</strong> {{ order.order_status|title }}</p>
     </div>
 </div>

@@ -1,38 +1,36 @@
 {% extends 'user_layout.html' %}
 {% load static %}
+{% load price_details %}
+
 {% block content %}
 
-<div class="container py-5">
+<!-- Flex container -->
+<div class="d-flex flex-wrap gap-3 justify-content-start">
 
-    <div class="row bg-white p-4 shadow rounded">
+    {% for order in orders %}
+    <div class="card mb-3 shadow-sm" style="width: 18rem; flex: 0 0 auto;">
+        <img src="{% static order.product.item_image1 %}" 
+             class="card-img-top" 
+             alt="{{ order.product.name }}">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ order.product.name }}</h5>
 
-        {% if orders %}
-        <table>
-            <tr>
-                <th>Order ID</th>
-                <th>Product</th>
-                <th>Size</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Payment</th>
-            </tr>
-            {% for order in orders %}
-            <tr>
-                <td>{{ order.order_id }}</td>
-                <td>{{ order.product_name }}</td>
-                <td>{{ order.size }}</td>
-                <td>{{ order.order_status }}</td>
-                <td>${{ order.total_amount }}</td>
-                <td>{{ order.payment_method }} ({{ order.payment_status }})</td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-        <p>You haven't placed any orders yet.</p>
-        {% endif %}
+            <p class="card-text mb-1">
+                <strong>Price:</strong> ₹{{ order.total_amount }}
+            </p>
 
+            <p class="card-text mb-1">
+                <strong>Status:</strong> 
+                <span class="badge bg-primary">{{ order.order_status }}</span>
+            </p>
 
+            <p class="card-text mt-auto"><small class="text-muted">Order #{{ order.id }}</small></p>
+        </div>
     </div>
+    {% empty %}
+    <p>No orders found.</p>
+    {% endfor %}
 
 </div>
+
 {% endblock %}

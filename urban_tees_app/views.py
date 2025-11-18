@@ -73,7 +73,7 @@ def admin_add_product(request):
         # new_price=int(request.POST.get('new_price'))
 
 
-        new_price=old_price*(offer/100)
+        new_price = old_price - (old_price * offer / 100)
         file1=request.FILES['file_name_1']
         file2=request.FILES['file_name_2']
         file3=request.FILES['file_name_3']
@@ -219,13 +219,8 @@ def admin_delete_product(request, id):
 
 # here
 
-def admin_orderlist(request):
-    """Admin-only page listing all orders."""
-    # if request.user.role != 'admin':
-    #     return render(request, 'admin.html', status=403)
 
-    orders = Order.objects.select_related('user', 'product').all().order_by('-id')
-    return render(request, 'admin_orderlist.html', {'orders': orders})
+
 
 
 @login_required
@@ -243,6 +238,22 @@ def admin_order_product(request, order_code):
     }
     return render(request, 'orders/admin_order_detail.html', context)
 
+
+
+
+#@login_required
+def admin_orderlist(request):
+    # Fetch all orders and prefetch related user and product
+    orders = Order.objects.select_related('user', 'product').all().order_by('-id')
+
+    context = {
+        'orders': orders
+    }
+    return render(request, 'admin_orderlist.html', context)
+
+def admin_order_page(request, order_id):
+    order = Order.objects.get(id=order_id)  # get the order by ID
+    return render(request, 'admin_order_product.html', {'order': order})
 
 
 
@@ -724,14 +735,11 @@ def cart_page(request):
 #     return render(request, "user_payment.html", context)
 
 
+
 def user_payment(request, order_id=None):
-    """
-    Handles payment for pending orders.
-    If user selects Cash on Delivery, marks order(s) as 'ordered' and shows a success message.
-    """
     user = request.user
 
-    # Get pending orders for the user
+    # get pending orders
     if order_id:
         orders = Order.objects.filter(user=user, id=order_id, order_status="pending")
     else:
@@ -741,23 +749,19 @@ def user_payment(request, order_id=None):
         messages.error(request, "No items to pay for.")
         return redirect("cart_page")
 
-    # Handle Cash on Delivery submission
     if request.method == 'POST':
         payment_method = request.POST.get('payment_method')
+
         if payment_method == 'cash_on_delivery':
             for order in orders:
-                order.order_status = "ordered"   # Mark as ordered
+                order.order_status = "ordered"
                 order.payment_method = "Cash on Delivery"
                 order.save()
-            
-            messages.success(request, "Order placed successfully!")
-            return redirect(reverse('user_payment'))  
-        # You can handle other payment methods here if needed (online/card)
-        # elif payment_method == 'online_payment':
-        #     pass
 
-    # Calculate totals
-    total_amount = sum([order.total_amount or order.net_amount for order in orders])
+            messages.success(request, "Order placed successfully!")
+            return redirect("user_myorder_page")   # ✔ final redirect
+
+    total_amount = sum(order.total_amount or order.net_amount for order in orders)
     total_discount = sum(order.total_discount or 0 for order in orders)
 
     context = {
@@ -765,18 +769,17 @@ def user_payment(request, order_id=None):
         "total_amount": total_amount,
         "total_discount": total_discount,
         "currency": "INR",
-        # Add Razorpay context if needed for online payment
-        # "razorpay_merchant_key": settings.RAZORPAY_KEY_ID,
-        # "callback_url": "/paymenthandler/",
     }
 
     return render(request, "user_payment.html", context)
 
 
-#@login_required
 def user_orders(request):
-    orders = Order.objects.filter(user=request.user)
-    return render(request, 'user_myorder_page.html', {'orders': orders})
+    orders = Order.objects.filter(user=request.user, order_status="ordered").order_by('-id')
+    return render(request, "user_myorder_page.html", {"orders": orders})
+
+
+
 
 def popup(request):
     return render(request, 'popup.html')    

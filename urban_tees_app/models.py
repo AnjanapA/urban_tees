@@ -101,13 +101,13 @@ class Order(models.Model):
     user = models.ForeignKey(
         'User',
         on_delete=models.CASCADE,
-        related_name='orders'  # all orders belonging to this user
+        related_name='orders'  
     )
 
     product = models.ForeignKey(
         'Product',
         on_delete=models.SET_NULL,
-        related_name='orders',  # all orders that include this product
+        related_name='orders', 
         null=True
     )
 
