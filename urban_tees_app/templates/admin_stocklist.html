@@ -1,0 +1,40 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+{% block content %}
+<div class="col bg-danger text-white p-3">
+
+    <!-- <div class="container mt-5"> -->
+        <h2 class="text-center mb-4">Product Stock List</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Product Name</th>
+                        <th>Small</th>
+                        <th>Medium</th>
+                        <th>Large</th>
+                        <th>Extra Large</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.item_name }}</td>
+                        <td>{{ product.small_size }}</td>
+                        <td>{{ product.medium_size }}</td>
+                        <td>{{ product.large_size }}</td>
+                        <td>{{ product.extralarge_size }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">No products found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

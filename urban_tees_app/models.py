@@ -41,16 +41,39 @@ class Product(models.Model):
 #     models.PhoneNumberField(_(""))
 #     models.EmailField(_(""), max_length=254)
 
+# class CustomUserManager(BaseUserManager):
+#     def create_user(self,email,password=None,**extra_fields):
+#         if not email:
+#             raise ValueError('The email field must be set')
+#         email=self.normalize_email(email)
+#         user=self.model(email=email,**extra_fields)
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
+    
 class CustomUserManager(BaseUserManager):
-    def create_user(self,email,password=None,**extra_fields):
+    def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError('The email field must be set')
-        email=self.normalize_email(email)
-        user=self.model(email=email,**extra_fields)
+            raise ValueError("The email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self.create_user(email, password, **extra_fields)
+
+
     # def create_superuser(self,email,password=None,**extra_fields):
     #     extra_fields.setdefault('is_superuser',True)
     #     return set.create_user(email,password,**extra_fields)
@@ -75,8 +98,12 @@ class User(AbstractUser):
     city=models.CharField(max_length=255)
     pincode=models.CharField(max_length=6)
     role=models.CharField(max_length=10, choices=ROLES)
-    activity=models.CharField(max_length=255)
     password=models.CharField(max_length=8)
+    ACTIVITY=[
+        ('unblock','Unblock'),
+        ('block','Block')
+    ]
+    activity=models.CharField(max_length=255,choices=ACTIVITY)
     # username = models.CharField(max_length=150, unique=True,null=True)
     objects=CustomUserManager()
 
@@ -152,5 +179,5 @@ class Order(models.Model):
     order_status = models.CharField(max_length=15, choices=ORDER_STATUS_CHOICES)
 
     def __str__(self):
-        product_name = self.product.name if self.product else "No Product"
+        product_name = self.product.item_name if self.product else "No Product"
         return f"Order {self.order_code} - {product_name}"

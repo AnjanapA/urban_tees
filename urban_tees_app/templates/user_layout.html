@@ -83,34 +83,6 @@
     </div>
   </nav>
 
-  <!-- Category Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 justify-content-evenly">
-    <div class="container">
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link {% if not selected_category %}active{% endif %}" href="{% url 'user_products' %}">All</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if selected_category == 'mens' %}active{% endif %}"
-               href="{% url 'user_category_products' 'mens' %}">Mens</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if selected_category == 'womens' %}active{% endif %}"
-               href="{% url 'user_category_products' 'womens' %}">Womens</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if selected_category == 'girls' %}active{% endif %}"
-               href="{% url 'user_category_products' 'girls' %}">Girls</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if selected_category == 'boys' %}active{% endif %}"
-               href="{% url 'user_category_products' 'boys' %}">Boys</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
   <!-- User Sidebar -->
   <div id="userSidebar">

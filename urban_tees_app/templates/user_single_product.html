@@ -56,20 +56,18 @@
 
 
             <div class="mt-4">
-                <button type="button" class="btn btn-success me-2" id="whish_list">
+                {% comment %}
+                <!-- <a href="{% url 'add_to_cart' item.id %}" class="btn btn-success me-2" id="whish_list">
                     <i class="bi bi-cart-plus"></i> Add to Cart
-                </button>
+                </a>
 
-                <button type="button" class="btn btn-outline-danger" id="cart">
+                <a href="{% url 'add_to_wishlist' item.id %}" class="btn btn-outline-danger" id="cart">
                     <i class="bi bi-heart"></i> Add to Wishlist
-                </button>
-
-                <!-- <button type="button" class="btn btn-outline-danger" id="cart">
-                        <i class="bi bi-heart"></i> Buy Now
-                    </button> -->
-                <a href="{% url user_payment  item.id %}" class="btn btn-primary" id="buynow">
+                </a>
+                <a href="{% url user_payment  item.id %}" class="btn btn-outline-primary" id="buynow">
                     BuyNow</a>
-
+ -->
+                    {% endcomment %}
             </div>
         </div>
     </div>

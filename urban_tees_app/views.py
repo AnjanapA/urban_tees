@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
 import uuid
+from django.contrib.admin.views.decorators import staff_member_required
 # import razorpay
 # from django.contrib.sites.models import Site
 
@@ -25,20 +26,38 @@ def custom_404_view(request, exception):
 
 handler404 = 'urban_tees.urls.custom_404_view'
 
-def main(request):
-    return render(request,'main.html')
+def admin_layout(request):
+    return render(request,'admin_layout.html')
+
+def user_layout(request):
+    return render(request,'user_layout.html')
 
 
-from django.shortcuts import render
-from .models import User, Order, Product
+def web_home(request):
+    item_details = Product.objects.all()
 
-def admin_dashboard(request):
-    # Count total users, orders, products
+    return render(request, 'web_home.html',{'item_details':item_details})
+
+@login_required
+def home(request):
+    if request.user.is_authenticated:
+        if request.user.role == "admin" or request.user.is_staff:
+            return redirect('admin_operations')
+        else:
+            item_details = Product.objects.all()
+            return render(request, 'home.html', {'item_details': item_details})
+    else:
+        item_details = Product.objects.all()
+        return render(request, 'home.html', {'item_details': item_details})
+
+
+
+@staff_member_required
+def admin_operations(request):
     total_users = User.objects.count()
     total_orders = Order.objects.count()
     total_products = Product.objects.count()
 
-    # Get recent orders (last 5)
     recent_orders = Order.objects.select_related('user', 'product').order_by('-id')[:5]
 
     context = {
@@ -48,20 +67,51 @@ def admin_dashboard(request):
         'recent_orders': recent_orders,
     }
 
-    return render(request, 'admin_dashboard.html', context)
+    return render(request,'admin_operations.html', context)
 
 
+def admin_stocklist(request):
+    products = Product.objects.all()  
+    context = {
+        "products": products
+    }
+    return render(request, "admin_stocklist.html", context)
 
 
+def admin_userslist(request):
+    users = User.objects.all()
 
-def user_layout(request):
-    return render(request,'user_layout.html')
+    user_data = []
+    for user in users:
+        last_order = user.orders.order_by('-id').first()  
+        user_data.append({
+            'id': user.id,
+            'name': user.user_name,
+            'activity': user.activity,
+            'order_status': last_order.order_status if last_order else None
+        })
+
+    context = {
+        'users': user_data
+    }
+    return render(request, 'admin_userslist.html', context)
+
+
+def update_activity(request, user_id):
+    if request.method == "POST":
+        try:
+            user = User.objects.get(id=user_id)
+            user.activity = request.POST.get("activity")
+            user.save()
+        except User.DoesNotExist:
+            pass   
+
+    return redirect('admin_userslist')
+
 
 def admin_view_product(request):
     return render(request,'admin_view_product.html')
 
-def admin_operations(request):
-    return render(request,'admin_operations.html')
 
 def image_preview(request):
     if request.method == 'POST':
@@ -74,8 +124,6 @@ def image_preview(request):
         return render(request,'admin_add_product.html',{'item':n})
     return render(request,'admin_add_product.html',{'item':''})
 
-def admin_layout(request):
-    return render(request,'admin_layout.html')
 
 def admin_add_product(request):
     n=""
@@ -94,12 +142,9 @@ def admin_add_product(request):
         large_size=request.POST.get('large_size')
         extralarge_size=request.POST.get('extralarge_size')
 
-        # product_size=request.POST.get('product_size')
-        # product_quantity=int(request.POST.get('product_quantity'))
-        # new_price=int(request.POST.get('new_price'))
-
 
         new_price = old_price - (old_price * offer / 100)
+
         file1=request.FILES['file_name_1']
         file2=request.FILES['file_name_2']
         file3=request.FILES['file_name_3']
@@ -160,13 +205,6 @@ def admin_add_product(request):
 #@login_required(login_url='/login/')
 
 def admin_view_product(request):
-    # item_details=Product.objects.all()
-    # return render(request,'admin_view_product.html',{'item':item_details})
-    # , category=None
-    # categories = ['mens', 'womens', 'girls', 'boys']
-    # if category in categories:
-    #     item_details = Product.objects.filter(category=category)
-    # else:
     item_details = Product.objects.all()
 
     paginator = Paginator(item_details,4) 
@@ -174,10 +212,7 @@ def admin_view_product(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'admin_view_product.html', {'item':item_details,'page_obj': page_obj})
-    # return render(request, 'user_products.html', {
-    #     'item':item_details,
-    #     'category': category,
-    # })
+
 
 def category_product(request, category=None):
     categories = ['mens', 'womens', 'girls', 'boys']
@@ -243,33 +278,14 @@ def admin_delete_product(request, id):
     return redirect('admin_view_product')
 
 
+
+
 # here
-
-
-
-
-
-@login_required
-def admin_order_product(request, order_code):
-    """Admin-only page showing detailed order info."""
-    if request.user.role != 'admin':
-        return render(request, 'errors/403.html', status=403)
-
-    order = Order.objects.select_related('user', 'product').filter(order_code=order_code).first()
-    if not order:
-        return render(request, 'errors/404.html', status=404)
-
-    context = {
-        'order': order
-    }
-    return render(request, 'orders/admin_order_detail.html', context)
-
-
 
 
 #@login_required
 def admin_orderlist(request):
-    # Fetch all orders and prefetch related user and product
+    
     orders = Order.objects.select_related('user', 'product').all().order_by('-id')
 
     context = {
@@ -278,22 +294,13 @@ def admin_orderlist(request):
     return render(request, 'admin_orderlist.html', context)
 
 def admin_order_page(request, order_id):
-    order = Order.objects.get(id=order_id)  # get the order by ID
+    order = Order.objects.get(id=order_id) 
     return render(request, 'admin_order_product.html', {'order': order})
 
 
 
 
 # user
-def web_home(request):
-    item_details = Product.objects.all()
-
-    return render(request, 'web_home.html',{'item':item_details})
-
-def home(request):
-    item_details = Product.objects.all()
-
-    return render(request, 'home.html',{'item':item_details})
 
 def account(request):
     return render(request, 'account.html')
@@ -584,30 +591,6 @@ def user_single_product(request, id):
         item_details=Product.objects.get(id=id)
         return render(request, 'user_single_product.html', {'item':item_details})
 
-#@login_required(login_url='/login/')
-def user_order_review(request, id):
-    item_details=Product.objects.get(id=id)
-    return render(request, 'user_order_review.html', {'item':item_details})
-
-# def user_payment(request, id):
-#     item_details=Product.objects.get(id=id)
-#     return render(request, 'user_payment.html', {'item':item_details})
-
-def cart_payment(request, product_id):
-    item_details=Cart.objects.get(product_id=product_id)
-    return render(request, 'user_payment.html', {'item':item_details})
-
-def myorder_page(request):
-    return render(request, 'user_myorder_page.html')
-
-def cart_slide(request,id):
-    item_details=Product.objects.get(id=id)
-    return render(request, 'cart_slide.html', {'item':item_details})
-
-
-# def wishlist_page(request):
-#     wishlist_items = Wishlist.objects.all
-#     return render(request, 'wish_list.html', {'wishlist_items': wishlist_items})
 #@login_required
 def wishlist_page(request):
     if request.method == "POST":
@@ -681,9 +664,9 @@ def cart_page(request):
                 order.net_amount = product.new_price * order.quantity
                 order.total_amount = order.net_amount
                 order.save()
-                messages.success(request, f"Updated quantity for {product.name}.")
+                messages.success(request, f"Updated quantity for {product.item_name}.")
             else:
-                messages.success(request, f"Added {product.name} to your cart.")
+                messages.success(request, f"Added {product.item_name} to your cart.")
 
             orders = Order.objects.filter(user=user, order_status="pending")
             return render(request, "cart_page.html", {"orders": orders})
@@ -730,42 +713,36 @@ def cart_page(request):
 
 
 
-# def user_payment(request, order_id=None):
-#     # client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-#     user = request.user
+def reduce_product_stock(order):
+    product = order.product
+    quantity = getattr(order, 'quantity', 1)  
+    print(f"Reducing stock for product '{product.item_name}', size '{order.size}' by {quantity}")
 
-#     if order_id:
-#         orders = Order.objects.filter(user=user, id=order_id, order_status="pending")
-#     else:
-#         orders = Order.objects.filter(user=user, order_status="pending")
+    
+    size_map = {
+        'S': 'small_size',
+        'M': 'medium_size',
+        'L': 'large_size',
+        'XL': 'extralarge_size'
+    }
 
-#     if not orders.exists():
-#         messages.error(request, "No items to pay for.")
-#         return redirect("cart_page")
+    size_key = order.size.upper()  
+    if size_key in size_map:
+        field_name = size_map[size_key]
+        current_stock = getattr(product, field_name)
+        new_stock = max(current_stock - quantity, 0)
+        setattr(product, field_name, new_stock)
+        product.save()
+        print(f"Updated stock: Small={product.small_size}, Medium={product.medium_size}, Large={product.large_size}, Extra Large={product.extralarge_size}")
+    else:
+        print("Warning: unknown size, stock not updated.")
 
-#     total_amount = sum([order.total_amount or order.net_amount for order in orders])
-#     total_discount = sum(order.total_discount or 0 for order in orders) 
-        
-#     context = {
-#         "orders": orders,
-#         # "razorpay_order_id": razorpay_order["id"],
-#         # "razorpay_merchant_key": settings.RAZORPAY_KEY_ID,
-#         "total_amount": total_amount,
-#         "total_discount": total_discount,
-
-#         # "total_discount":total_discount,
-#         "currency": "INR",
-#         # "callback_url": "/paymenthandler/",
-#     }
-
-#     return render(request, "user_payment.html", context)
 
 
 
 def user_payment(request, order_id=None):
     user = request.user
 
-    # get pending orders
     if order_id:
         orders = Order.objects.filter(user=user, id=order_id, order_status="pending")
     else:
@@ -777,15 +754,18 @@ def user_payment(request, order_id=None):
 
     if request.method == 'POST':
         payment_method = request.POST.get('payment_method')
+    
 
         if payment_method == 'cash_on_delivery':
             for order in orders:
+                reduce_product_stock(order)
+
                 order.order_status = "ordered"
                 order.payment_method = "Cash on Delivery"
                 order.save()
 
             messages.success(request, "Order placed successfully!")
-            return redirect("user_myorder_page")   # ✔ final redirect
+            return redirect("user_myorder_page")          
 
     total_amount = sum(order.total_amount or order.net_amount for order in orders)
     total_discount = sum(order.total_discount or 0 for order in orders)

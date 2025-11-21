@@ -1,0 +1,45 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+{% block content %}
+<div class="col bg-danger text-white p-3">
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Activity</th>
+                <th>Order Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+
+                <td>
+                    <form method="post" action="{% url 'update_activity' user.id %}">
+                        {% csrf_token %}
+                        <select name="activity" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="unblock" {% if user.activity == 'unblock' %}selected{% endif %}>Unblock
+                            </option>
+                            <option value="block" {% if user.activity == 'block' %}selected{% endif %}>Block</option>
+                        </select>
+                    </form>
+                </td>
+
+                <td>
+                    {% if user.order_status %}
+                    {{ user.order_status }}
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

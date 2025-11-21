@@ -3,11 +3,16 @@ from . import views
 
 urlpatterns = [
 
-path('main',views.main,name='main'),
 
-path('admin_operations',views.admin_operations,name='admin_operations'),
+path('admin-dashboard/',views.admin_operations,name='admin_operations'),
 
-path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
+path('stock/', views.admin_stocklist, name='admin_stocklist'),
+
+path('orders/', views.admin_orderlist, name='admin_orderlist'),          
+path('order/<int:order_id>/', views.admin_order_page, name='admin_order_page'),
+
+path('users/', views.admin_userslist, name='admin_userslist'),
+path('users/<int:user_id>/activity/update/', views.update_activity, name='update_activity'),
 
 path('image_preview',views.image_preview,name='image_preview'),
 
@@ -19,11 +24,7 @@ path('admin_edit/<int:id>',views.admin_edit,name='admin_edit'),
 path('admin_edit_product/<int:id>',views.admin_edit_product,name='admin_edit_product'),
 path('admin_delete_product/<int:id>',views.admin_delete_product,name='admin_delete_product'),
 
-path('admin_orderlist',views.admin_orderlist,name='admin_orderlist'),
-path('admin_order_product/<str:order_code>',views.admin_order_product,name='admin_order_product'),
 
-path('orders/', views.admin_orderlist, name='admin_orderlist'),          
-path('order/<int:order_id>/', views.admin_order_page, name='admin_order_page'),
 
 # user
 
@@ -48,7 +49,6 @@ path('verify_otp', views.verify_otp, name='verify_otp'),
 path('final_register', views.final_register, name='final_register'),
 path('resend', views.resend, name='resend'),
 
-path('cart_slide/<int:id>/',views.cart_slide,name='cart_slide'),
 path('logout',views.logout_acc,name='logout'),
 path('user_orders', views.user_orders, name='user_orders'),
 
@@ -58,9 +58,7 @@ path('user_products/<str:category>/', views.user_products, name='user_category_p
 path('user_single_product/<int:id>/', views.user_single_product, name='user_single_product'),
 path('wishlist_page/', views.wishlist_page, name='wishlist_page'),
 path('cart_page', views.cart_page, name='cart_page'),
-path('user_order_review/<int:id>/', views.user_order_review, name='user_order_review'),
 
-path('cart_payment/<str:product_id>/', views.cart_payment, name='cart_payment'),
 
 path('user_payment', views.user_payment, name='user_payment'),
 path('user_payment/<int:order_id>/', views.user_payment, name='user_payment'),
