@@ -36,46 +36,47 @@
     <div class="grid text-center container-fluid" style="--bs-columns: 3;">
 
         <!-- <div class="container mt-4"> -->
-            <div class="row g-3">
-                {% for pro in page_obj %}
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+        <div class="row g-3">
+            {% for pro in page_obj %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
 
-                    <div class="card w-100 position-relative">
-                        <button class="btn position-absolute top-0 end-0 m-2 p-0 bookmark-btn"
-                            style="background: none; border: none;">
-                            <i class="bi bi-bookmark-heart-fill fs-4 text-secondary"></i>
-                        </button>
-                        <a href="{% url 'user_single_product' pro.id %}">
-                            <img src="{% static pro.item_image1 %}" class="card-img-top" alt="product image"
-                                style="height: auto; max-height: 200px; object-fit: contain;">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ pro.item_name }}</h5>
-                            <h5 class="card-text">{{ pro.item_description }}</h5>
-                        </div>
-                        <div>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">S- {{ pro.small_size }}</p>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">M-{{ pro.medium_size }}</p>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">L-{{ pro.large_size }}</p>
-                            <p class="card-text btn btn-outline-dark btn-sm disabled">XL-{{ pro.extralarge_size }}</p>
-                        </div>
-                        <ul class="d-flex justify-content-between me-5">
-                            <li class="list-group-item text-danger fs-2">{{ pro.new_price }}</li>
-                            <li class="list-group-item fs-3"><del>{{ pro.old_price }}</del></li>
-                            <li class="list-group-item text-success fs-2">{{ pro.offer }}%</li>
-                        </ul>
-                        <ul class=" d-flex justify-content-between me-5">
+                <div class="card w-100 position-relative">
+                    <button class="btn position-absolute top-0 end-0 m-2 p-0 bookmark-btn"
+                        style="background: none; border: none;">
+                        <i class="bi bi-bookmark-heart-fill fs-4 text-secondary"></i>
+                    </button>
+                    <a href="{% url 'admin_singleproduct_view' pro.id %}">
 
-                            <a class="btn btn-outline-success" href="{% url 'admin_edit' pro.id  %}">edit</a>
-
-                            <a class="btn btn-outline-danger" href="{% url 'admin_delete_product' pro.id %}">delete</a>
-                        </ul>
+                        <img src="{% static pro.item_image1 %}" class="card-img-top" alt="{{ pro.item_name }}"
+                            style="height: auto; max-height: 200px; object-fit: contain;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ pro.item_name }}</h5>
+                        <h5 class="card-text">{{ pro.item_description }}</h5>
                     </div>
+                    <div>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">S- {{ pro.small_size }}</p>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">M-{{ pro.medium_size }}</p>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">L-{{ pro.large_size }}</p>
+                        <p class="card-text btn btn-outline-dark btn-sm disabled">XL-{{ pro.extralarge_size }}</p>
+                    </div>
+                    <ul class="d-flex justify-content-between me-5">
+                        <li class="list-group-item text-danger fs-2">{{ pro.new_price }}</li>
+                        <li class="list-group-item fs-3"><del>{{ pro.old_price }}</del></li>
+                        <li class="list-group-item text-success fs-2">{{ pro.offer }}%</li>
+                    </ul>
+                    <ul class=" d-flex justify-content-between me-5">
+
+                        <a class="btn btn-outline-success" href="{% url 'admin_edit' pro.id  %}">edit</a>
+
+                        <a class="btn btn-outline-danger" href="{% url 'admin_delete_product' pro.id %}">delete</a>
+                    </ul>
                 </div>
-                {% empty %}
-                <p>No products found.</p>
-                {% endfor %}
             </div>
+            {% empty %}
+            <p>No products found.</p>
+            {% endfor %}
+        </div>
         <!-- </div> -->
 
         <!-- Pagination controls -->

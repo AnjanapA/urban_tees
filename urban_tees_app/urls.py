@@ -18,7 +18,10 @@ path('image_preview',views.image_preview,name='image_preview'),
 
 path('admin_layout',views.admin_layout,name='admin_layout'),
 path('admin_add_product',views.admin_add_product,name='admin_add_product'),
+
 path('admin_view_product',views.admin_view_product,name='admin_view_product'),
+path('admin_singleproduct_view/<int:id>',views.admin_singleproduct_view,name='admin_singleproduct_view'),
+
 
 path('admin_edit/<int:id>',views.admin_edit,name='admin_edit'),
 path('admin_edit_product/<int:id>',views.admin_edit_product,name='admin_edit_product'),

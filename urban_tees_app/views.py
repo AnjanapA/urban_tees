@@ -108,23 +108,7 @@ def update_activity(request, user_id):
 
     return redirect('admin_userslist')
 
-
-def admin_view_product(request):
-    return render(request,'admin_view_product.html')
-
-
-def image_preview(request):
-    if request.method == 'POST':
-        n=""
-        f=request.FILES['file_name']
-        if f:
-            n=os.path.join('static/images/',f.name)
-        else:
-            n=""
-        return render(request,'admin_add_product.html',{'item':n})
-    return render(request,'admin_add_product.html',{'item':''})
-
-
+    
 def admin_add_product(request):
     n=""
     upload=""
@@ -202,7 +186,31 @@ def admin_add_product(request):
 
     return render(request,'admin_add_product.html',{'upload':upload})
 
+
+def image_preview(request):
+    if request.method == 'POST':
+        n=""
+        f=request.FILES['file_name']
+        if f:
+            n=os.path.join('static/images/',f.name)
+        else:
+            n=""
+        return render(request,'admin_add_product.html',{'item':n})
+    return render(request,'admin_add_product.html',{'item':''})
+
+
 #@login_required(login_url='/login/')
+
+def admin_singleproduct_view(request, id):
+    try:
+        item_details = Product.objects.get(id=id)
+    except Product.DoesNotExist:
+        return render(request, 'admin_singleproduct_view.html', {'item': None, 'error': 'Product not found.'})
+
+    if not is_user(request):
+        return render(request, 'admin_singleproduct_view.html', {'item': item_details, 'error': 'Unauthorized access.'})
+
+    return render(request, 'admin_singleproduct_view.html', {'item': item_details})
 
 def admin_view_product(request):
     item_details = Product.objects.all()

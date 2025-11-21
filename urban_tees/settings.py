@@ -155,6 +155,6 @@ AUTH_USER_MODEL = 'urban_tees_app.User'
 # razorpay
 
 
-RAZORPAY_KEY_ID = "rzp_test_1DP5mmOlF5G5ag"
-RAZORPAY_KEY_SECRET = "1DP5mmOlF5G5agPT8dwhsKX9"
+RAZORPAY_KEY_ID = "rzp_live_RiK5gNKlS9o6XS"
+RAZORPAY_KEY_SECRET = "1cHfxUQspcVdvz7jOf7yl837"
 
